@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:ns1="http://om.btow.com" name="setIdle"
+             targetNamespace="http://om.btow.com">
+	     
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:setIdle"/>
+    </types>
+	
+    <wsdl:message name="setIdleRequest">
+        <wsdl:part name="idle" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="setIdleResponse">
+        <wsdl:part name="responseCode" type="xsd:boolean"/>
+    </wsdl:message>
+	
+	
+    <portType name="IdlePort">
+        <wsdl:documentation>Port Inscription</wsdl:documentation>
+        <wsdl:operation name="setIdle">
+            <wsdl:documentation>Dispo de la banque</wsdl:documentation>
+            <wsdl:input message="ns1:setIdleRequest"/>
+            <wsdl:output message="ns1:setIdleResponse"/>
+        </wsdl:operation>
+    </portType>
+	
+    <binding name="IdleBinding" type="ns1:IdlePort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:documentation>Binding Inscription</wsdl:documentation>
+        <wsdl:operation name="setIdle">
+            <wsdl:documentation>Dispo de la banque</wsdl:documentation>
+            <soap:operation soapAction="urn:#setIdle" style="rpc"/>
+            <wsdl:input name="setIdleRequest">
+                <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output name="setIdleResponse">
+                <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="IdleService">
+        <documentation>Service de dispo OM-Banking </documentation>
+        <port name="IdlePort" binding="ns1:IdleBinding">
+            <soap:address location="https://b2w-sb.orange-money.com/idle/?bic=BNKSXGWE"/>
+        </port>
+    </service>
+</definitions>

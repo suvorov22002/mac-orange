@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<afb-portal>
+	<module>
+		<code>OgMo-01</code>
+		<title>Orange Money</title>
+		<description>Orange Money Account Connected</description>
+		<earName>OrangeMoney.ear</earName>
+		<date>25/03/2016</date>
+		<version>1.0</version>
+		<image>OgMo_icon.jpg</image>
+		<developer>Francis KONCHOU</developer>
+		<address>francis_konchou@afrilandfirstbank.com</address>
+		<context-root>OrangeMoney</context-root>
+	</module>
+</afb-portal>

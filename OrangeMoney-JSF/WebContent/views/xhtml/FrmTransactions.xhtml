@@ -1,0 +1,247 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:panel styleClass="client-panel-body">
+		<h:form prependId="false">
+
+			<style>
+div#transac-contain {
+	overflow-y: scroll;
+	height: 380px;
+	width: 850px;
+	margin: 0px 0;
+}
+
+div#transac-contain table {
+	margin: 1em 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+div#transac-contain table td, div#transac-contain table th {
+	border: 1px solid #eee;
+	padding: .2em 2px;
+	text-align: left;
+}
+</style>
+
+			<a4j:jsFunction name="closeFrmTransactions"
+				reRender="#{frmTransactions.areaToRender}" immediate="true"
+				action="#{frmTransactions.close}" />
+
+			<script>
+
+		$( "#dialog-transaction" ).dialog({
+			autoOpen: true,
+			width: 900,
+			close: function() {
+				closeFrmTransactions();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-transaction" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+	</script>
+
+			<div id="dialog-transaction" title="#{frmTransactions.title}">
+
+
+				<fieldset>
+					<legend>-</legend>
+					<h:panelGrid columns="4">
+						<a4j:commandButton id="cmdGetNbreTrans"
+							rendered="#{userHabilitation.btnConsulterTransactionsEnabled}"
+							value="Lot à comptabiliser"
+							action="#{frmTransactions.getIndictifLot}"
+							disabled="#{!frmTransactions.checkedTrans}" immediate="true"
+							reRender="pnlCommands,txtIndiTfjo, pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+						<rich:spacer width="15px" />
+
+						<h:inputText class="text" id="txtIndiTfjo"
+							value="#{frmTransactions.indicatifLotTrans}" readonly="true"
+							style="width:500px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+					</h:panelGrid>
+				</fieldset>
+
+				<fieldset>
+					<legend>Liste des Transactions</legend>
+
+					<div id="transac-contain">
+						<h:dataTable id="gridTransactions"
+							value="#{frmTransactions.transactions}" var="transac"
+							styleClass="ui-widget ui-widget-content"
+							headerClass="ui-widget-header"
+							rowClasses="row-style-pair, row-style-impair">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value=" " />
+								</f:facet>
+								<h:selectBooleanCheckbox value="#{transac.selected}">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:selectBooleanCheckbox>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="N°" />
+								</f:facet>
+								<h:outputText value="#{frmTransactions.num}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="External RefNo" />
+								</f:facet>
+								<h:outputText value="#{transac.externalRefNo}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Opération" />
+								</f:facet>
+								<h:outputText value="#{transac.typeOperation.value}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Client" />
+								</f:facet>
+								<h:outputText value="#{transac.subscriber.customerName}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date" />
+								</f:facet>
+								<h:outputText value="#{transac.formattedDate}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Heure" />
+								</f:facet>
+								<h:outputText value="#{transac.hour}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Etat" />
+								</f:facet>
+								<h:outputText value="#{transac.status.value}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Compte" />
+								</f:facet>
+								<h:outputText value="#{transac.account}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Montant" />
+								</f:facet>
+								<h:outputText value="#{transac.formattedMontant}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Commissions" />
+								</f:facet>
+								<h:outputText value="#{transac.commissions}"
+									style="color:#{!transac.success ? 'red' : 'black'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Posté?" />
+								</f:facet>
+								<h:graphicImage
+									value="#{informationBean.graphicUIURL}/images/#{transac.posted ? 'apply16x.png' : 'DeleteRed16x.png'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Completed" />
+								</f:facet>
+								<h:graphicImage
+									value="#{informationBean.graphicUIURL}/images/#{transac.completed ? 'ok16x.png' : 'DeleteRed16x.png'}" />
+							</h:column>
+
+						</h:dataTable>
+					</div>
+				</fieldset>
+
+				<fieldset>
+					<legend>-</legend>
+					<h:panelGrid id="pnlCommands" columns="13">
+						<a4j:commandButton id="cmdSearch"
+							rendered="#{userHabilitation.btnConsulterTransactionsEnabled}"
+							disabled="#{!frmTransactions.doSearch}"
+							value="Vérifier écritures comptables"
+							action="#{frmTransactions.checkEC}" immediate="true"
+							reRender="pnlCommands,gridTransactions, pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+						<rich:spacer width="15px" />
+						
+						<a4j:commandButton
+							rendered="#{userHabilitation.btnPosterECIntoDeltaEnabled}"
+							disabled="#{!frmTransactions.postFile}" id="cmdTFJO"
+							value="Transfert file écritures comptables"
+							title="Transfert du fichier des ecritures comptables dans le Core Banking System"
+							action="#{frmTransactions.transferFileEC}" immediate="true"
+							reRender="txtIndiTfjo, cmdSearch,gridTransactions,pnlCommands,cmdTFJO,pnlMsg,pnlReportViewwer"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+						<rich:spacer width="15px" />
+
+						<h:outputLink id="lnkECFile"
+							rendered="#{frmTransactions.exportedFileExist}" target="_blank"
+							value="#{informationBean.downloadDataURL}/#{frmTransactions.exportFileNameRapp}">
+							<h:outputText value="#{frmTransactions.exportFileNameRapp}" />
+						</h:outputLink>
+					</h:panelGrid>
+				</fieldset>
+
+			</div>
+
+
+		</h:form>
+
+
+	</rich:panel>
+
+</f:subview>

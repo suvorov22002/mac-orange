@@ -1,0 +1,247 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<h:form prependId="false">
+
+		<style>
+div#branchMail-contain {
+	overflow-y: scroll;
+	height: 180px;
+	width: 600px;
+	margin: 0px 0;
+}
+
+div#branchMail-contain table {
+	margin: 1em 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+div#branchMail-contain table td, div#branchMail-contain table th {
+	border: 1px solid #eee;
+	padding: .1em 1px;
+	text-align: left;
+}
+
+div#item-contain {
+	overflow-y: scroll;
+	height: 120px;
+	width: 325px;
+	margin: 0px 0;
+}
+
+div#item-contain table {
+	margin: 1em 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+div#item-contain table td, div#item-contain table th {
+	border: 1px solid #eee;
+	padding: .1em 1px;
+	text-align: left;
+}
+</style>
+
+		<a4j:jsFunction name="closeFrmBranchMail"
+			reRender="#{frmBranchMail.areaToRender}" immediate="true"
+			action="#{frmBranchMail.close}" />
+
+		<script>
+
+		$( "#dialog-branchMail" ).dialog({
+			autoOpen: true,
+			width: 650,
+			close: function() {
+				closeFrmBranchMail();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-branchMail" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+		
+	</script>
+
+		<div id="dialog-branchMail" title="#{frmBranchMail.title}">
+
+			<fieldset>
+				<legend>
+					<h:outputText value="Édition" />
+				</legend>
+
+				<table>
+					<tr>
+
+						<td valign="top"><h:panelGrid id="pnlBranch" columns="1">
+								<h:outputText value="Agence :" style="font-weight:bold;" />
+								<h:selectOneMenu value="#{frmBranchMail.selectedBranch}"
+									class="text">
+									<f:selectItems value="#{frmBranchMail.branchItems}" />
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:selectOneMenu>
+							</h:panelGrid></td>
+
+						<td valign="top"><h:panelGrid id="pnlMail" columns="2">
+								<h:outputText value="Utilisateur : " style="font-weight:bold;" />
+								<h:outputText value=" " style="font-weight:bold;" />
+								
+								<h:inputText id="txtUser" class="text"
+									value="#{frmBranchMail.searchUser}" style="width:150px"
+									maxlength="20">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+								<a4j:commandButton value="..."
+									action="#{frmBranchMail.searchUsers}" immediate="true"
+									title="Cliquer ici pour rechercher les utilisateurs correspondants"
+									reRender="cbxUsers"
+									styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+									onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+								<h:selectOneMenu id="cbxUsers"
+									value="#{frmBranchMail.selectedUser}" class="text">
+									<f:selectItems value="#{frmBranchMail.userItem}" />
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:selectOneMenu>
+								<a4j:commandButton value="Add>>"
+									action="#{frmBranchMail.addUser}" immediate="true"
+									title="Ajouter à la liste"
+									reRender="gridUserBranchMail, txtUser, cbxUsers, pnlMsg"
+									styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+									onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+							</h:panelGrid>
+
+							<fieldset>
+
+								<legend>
+									<h:outputText value="Mails" />
+								</legend>
+								<div id="item-contain">
+									<h:dataTable id="gridUserBranchMail"
+										value="#{frmBranchMail.currentObject.mails}" var="item"
+										styleClass="ui-widget ui-widget-content"
+										headerClass="ui-widget-header"
+										rowClasses="row-style-pair, row-style-impair">
+										<h:column>
+											<f:facet name="header">
+												<h:outputText value="Mail" />
+											</f:facet>
+											<h:outputText value="#{item}" />
+										</h:column>
+
+										<h:column>
+											<f:facet name="header">
+												<h:outputText value="" />
+											</f:facet>
+											<h:graphicImage value="/views/img/DeleteRed16x.png"
+												title="Supprimer l'Email" style="cursor:pointer">
+												<a4j:support event="onclick"
+													reRender="gridUserBranchMail, pnlMsg" ajaxSingle="true"
+													onsubmit="startWaitInStyle();"
+													oncomplete="stoptWaitInStyle();">
+													<f:setPropertyActionListener
+														target="#{frmBranchMail.deletedUser}" value="#{item}" />
+												</a4j:support>
+											</h:graphicImage>
+										</h:column>
+
+									</h:dataTable>
+								</div>
+							</fieldset></td>
+
+					</tr>
+				</table>
+
+
+
+
+				<h:panelGrid columns="1">
+					<a4j:commandButton value="Valider"
+						rendered="#{userHabilitation.btnSaveBranchMailsEnabled}"
+						action="#{frmBranchMail.sauvegarder}" immediate="true"
+						title="Cliquez ici pour rechercher les etapes"
+						reRender="gridBranchMails, gridUserBranchMail, pnlBranch, pnlMail, pnlMsg"
+						styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+						onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+				</h:panelGrid>
+
+			</fieldset>
+
+
+			<fieldset>
+				<legend>
+					<h:outputText value="Liste des agences" />
+				</legend>
+				<div id="branchMail-contain">
+					<h:dataTable id="gridBranchMails" value="#{frmBranchMail.list}"
+						var="agence" styleClass="ui-widget ui-widget-content"
+						headerClass="ui-widget-header"
+						rowClasses="row-style-pair, row-style-impair">
+
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="N°" />
+							</f:facet>
+							<h:outputText value="#{frmBranchMail.num}" />
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="Agence" />
+							</f:facet>
+							<h:outputText value="#{agence.codeAgence} - #{agence.libAgence}" />
+						</h:column>
+
+						<h:column
+							rendered="#{userHabilitation.btnUpdateBranchMailsEnabled}">
+							<f:facet name="header">Edit</f:facet>
+							<h:graphicImage value="/views/img/edit16x.png" title="Modifier"
+								style="cursor:pointer">
+								<a4j:support event="onclick" reRender="gridUserBranchMail, pnlBranch, pnlMail, pnlMsg"
+									ajaxSingle="true">
+									<f:setPropertyActionListener
+										target="#{frmBranchMail.currentObject}" value="#{agence}" />
+								</a4j:support>
+							</h:graphicImage>
+						</h:column>
+
+						<h:column
+							rendered="#{userHabilitation.btnDeleteBranchMailsEnabled}">
+							<f:facet name="header">Suppr</f:facet>
+							<h:graphicImage value="/views/img/DeleteRed16x.png"
+								title="Supprimer" style="cursor:pointer">
+								<a4j:support event="onclick" reRender="gridBranchMails, gridUserBranchMail, pnlBranch, pnlMail, pnlMsg"
+									ajaxSingle="true" onsubmit="startWaitInStyle();"
+									oncomplete="stoptWaitInStyle();">
+									<f:setPropertyActionListener
+										target="#{frmBranchMail.deletedId}" value="#{agence.id}" />
+								</a4j:support>
+							</h:graphicImage>
+						</h:column>
+
+					</h:dataTable>
+				</div>
+			</fieldset>
+
+
+
+		</div>
+
+	</h:form>
+
+</f:subview>

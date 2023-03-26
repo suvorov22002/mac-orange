@@ -1,0 +1,156 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j">
+
+<rich:panel styleClass="client-panel-body">
+<h:form prependId="false">
+
+	<style>
+		div#transac-contain { overflow-y:scroll; height:380px; width: 870px; margin: 0px 0; }
+		div#transac-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+		div#transac-contain table td, div#transac-contain table th { border: 1px solid #eee; padding: .2em 2px; text-align: left; }
+	</style>
+	
+	<a4j:jsFunction name="closefrmCompensation" reRender="#{frmCompensation.areaToRender}" immediate="true" action="#{frmCompensation.close}" />
+	
+	<script>
+
+		$( "#dialog-transaction" ).dialog({
+			autoOpen: true,
+			width: 900,
+			close: function() {
+				closefrmCompensation();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-transaction" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+	</script>
+
+<div id="dialog-transaction" title="#{frmCompensation.title}">
+
+	<fieldset><legend>Recherche</legend>
+		<h:panelGrid columns="10">
+		
+			<h:outputText  value="Du :" />
+			<rich:spacer width="3px" />
+			<h:inputText class="text" value="#{frmCompensation.txtDateDeb}" style="width:70px">
+				<a4j:support event="onchange" ajaxSingle="true" />
+			</h:inputText>
+			
+			<h:outputText  value="Au :" />
+			<rich:spacer width="3px" />
+			<h:inputText class="text" value="#{frmCompensation.txtDateFin}" style="width:70px">
+				<a4j:support event="onchange" ajaxSingle="true" />
+			</h:inputText>
+									
+			<rich:spacer width="5px" />
+			
+			<a4j:commandButton rendered="#{userHabilitation.btnConsulterTransactionsEnabled}" value="Rechercher" action="#{frmCompensation.filterTransactions}" immediate="true" reRender="gridTransactions, pnlMsg" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+		
+		</h:panelGrid>
+	</fieldset>
+		
+	<fieldset><legend>Liste des Transactions</legend>
+	
+	<div id="transac-contain">
+		<h:dataTable id="gridTransactions" value="#{frmCompensation.transactions}" var="transac" styleClass="ui-widget ui-widget-content" headerClass="ui-widget-header" rowClasses="row-style-pair, row-style-impair">
+		
+			<h:column>
+				<f:facet name="header"><h:outputText value=" " /></f:facet>
+				<h:selectBooleanCheckbox value="#{transac.selected}">
+					<a4j:support event="onchange" ajaxSingle="true" />
+				</h:selectBooleanCheckbox>
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="N°" /></f:facet>
+				<h:outputText value="#{frmCompensation.num}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="External RefNo" /></f:facet>
+				<h:outputText value="#{transac.externalRefNo}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="Opération" /></f:facet>
+				<h:outputText value="#{transac.typeOperation.value}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="Client" /></f:facet>
+				<h:outputText value="#{transac.subscriber.customerName}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="Date" /></f:facet>
+				<h:outputText value="#{transac.formattedDate}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="Heure" /></f:facet>
+				<h:outputText value="#{transac.hour}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="Etat" /></f:facet>
+				<h:outputText value="#{transac.status.value}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="Compte" /></f:facet>
+				<h:outputText value="#{transac.account}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header"><h:outputText value="Montant" /></f:facet>
+				<h:outputText value="#{transac.formattedMontant}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+				
+			<h:column>
+				<f:facet name="header"><h:outputText value="Commissions" /></f:facet>
+				<h:outputText value="#{transac.commissions}" style="color:#{!transac.success ? 'red' : 'black'}" />
+			</h:column>
+							
+			<h:column>
+				<f:facet name="header"><h:outputText value="Posté?" /></f:facet>
+				<h:graphicImage value="#{informationBean.graphicUIURL}/images/#{transac.posted ? 'apply16x.png' : 'DeleteRed16x.png'}" />
+			</h:column>
+				
+		</h:dataTable>
+		</div>
+	</fieldset>
+	
+	<fieldset><legend>-</legend>
+		<h:panelGrid id="pnlCommands" columns="11">
+			<a4j:commandButton value="Extraire EC" title="Extraire les écritures comptables des transactions selectionnées dans un fichier" action="#{frmCompensation.extraireEcritures}" immediate="true" reRender="lnkECFile, pnlCommands, pnlMsg" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+			<rich:spacer width="3px" />
+			<a4j:commandButton  value="Exécuter la Compensation"  action="#{frmCompensation.executerCompensation}" immediate="true" reRender="pnlMsg,pnlReportViewwer" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+		</h:panelGrid>
+	</fieldset>
+	
+</div>
+
+
+</h:form>
+
+
+</rich:panel>
+
+</f:subview>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
+
+   <endpoint 
+       name="IB2WService"
+       implementation="com.banktowallet.b2w.b2w.IB2WService"
+       url-pattern="/IB2WService" />
+   
+</endpoints>

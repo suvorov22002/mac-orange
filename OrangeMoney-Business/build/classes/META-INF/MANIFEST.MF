@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: OrangeMoney-Client.jar 
+ OrangeMoney-DAO.jar 
+ OrangeMoney-JPA.jar
+

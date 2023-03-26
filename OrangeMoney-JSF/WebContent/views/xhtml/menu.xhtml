@@ -1,0 +1,64 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:rich="http://richfaces.org/rich"
+        xmlns:a4j="http://richfaces.org/a4j">
+	
+	<script>
+	$(function() {
+		$( "#tabs" ).tabs({
+			collapsible: true
+		});
+	});
+		
+	</script>	
+	
+<h:form prependId="false"> 
+	
+	<!-- MENUS SOUS FORME DE TABULATIONS -->
+	<div id="tabs">
+	
+		<ul>
+			<li style="display:#{userHabilitation.menuPullPushEnabled ? 'block' : 'none'};background-color: #ffffff"><a href="#tabs-1">Abonnements</a></li>
+			<li style="display:#{userHabilitation.menuTraitementEnabled ? 'block' : 'none'};background-color: #ffffff"><a href="#tabs-2">Gestion des Transactions </a></li>
+			<li style="display:#{userHabilitation.menuConfigsEnabled ? 'block' : 'none'};background-color: #ffffff"><a href="#tabs-3">Configurations</a></li>
+			<li style="display:#{userHabilitation.menuRapprochementEnabled ? 'block' : 'none'};background-color: #ffffff"><a href="#tabs-4">Rapprochements comptables</a></li>
+		</ul>
+		
+		<div id="tabs-1" style="margin: 2px 2px 2px 2px; padding:0px;">
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.menuSouscriptionEnabled}" action="#{frmSubscriber.open}" reRender="#{frmSubscriber.areaToRender}" value="Souscriptions"  title="Souscription des clients a Orange Money" immediate="true" styleClass="ui-button"  />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.menuStatsSouscriptionsEnabled}" action="#{frmSouscriptions.open}" reRender="#{frmSouscriptions.areaToRender}" value="Gestion des Souscriptions"  title="Gestion des souscriptions" immediate="true" styleClass="ui-button " />
+			<a4j:commandButton rendered="#{userHabilitation.btnConfimerSouscriptionEnabled}" action="#{frmValidSubscriber.open}" reRender="#{frmValidSubscriber.areaToRender}" value="Valider Souscriptions"  title="Validation Souscription des clients au Pull/Push from Account" immediate="true" styleClass="ui-button ui-widget ui-state-default ui-corner-all" />
+			<a4j:commandButton rendered="#{userHabilitation.btnProfilSouscriptionEnabled}" action="#{frmProfilSubscriber.open}" reRender="#{frmProfilSubscriber.areaToRender}" value="Profil abonné"  title="Attribuer un Profil pour un abonné" immediate="true" styleClass="ui-button ui-widget ui-state-default ui-corner-all" />
+			
+		</div>
+		
+		<div id="tabs-2" style="margin: 2px 2px 2px 2px; padding:0px;">
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.menuStatsTransactionsEnabled}" action="#{frmTransactions.open}" reRender="#{frmTransactions.areaToRender}" value="Traitement des Transactions"  title="Traitement des transactions" immediate="true" styleClass="ui-button" />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.menuUSSDTransEnabled}" value="Consultation des Transactions" title="Consultation des transactions " action="#{frmUssdTrans.open}" reRender="#{frmUssdTrans.areaToRender}" immediate="true" styleClass="ui-button" />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.menuUSSDTransEnabled}" value="Consultation des cumuls" title="Consultation des cumuls des abonnées " action="#{frmCumulTransaction.open}" reRender="#{frmCumulTransaction.areaToRender}" immediate="true" styleClass="ui-button" />
+				
+		    <a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;"  rendered="#{userHabilitation.menuConfigsEnabled}" value="Activation du Service" title="Traitement Compense" action="#{checkIdleService.processActive}" reRender="pnlMsg" immediate="true" styleClass="ui-button" />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;"  rendered="#{userHabilitation.menuConfigsEnabled}" value="Activation du Service" title="Activation du  Service" action="#{checkIdleService.processActive}" reRender="pnlMsg" immediate="true" styleClass="ui-button" />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;"  rendered="#{userHabilitation.menuConfigsEnabled}" value="Arret du Service" title="Arret du Service" action="#{checkIdleService.processCancel}" reRender="pnlMsg" immediate="true" styleClass="ui-button" />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;"  rendered="#{userHabilitation.menuConfigsEnabled}"  value="Initialisation des services OM" title="Initialisation des services OM" action="#{checkIdleService.initParameter}" reRender="pnlMsg" immediate="true" styleClass="ui-button" />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;"  rendered="#{userHabilitation.btnSuiviRobotEnabled}"  value="Suivi Robot" title="Suivi Robot" action="#{frmSuiviRobot.open}" reRender="#{frmSuiviRobot.areaToRender}" immediate="true" styleClass="ui-button" />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;"  rendered="#{userHabilitation.menuUSSDTransEnabled}"  value="Simulation transactions" title="Simulation transactions" action="#{frmSimulation.open}" reRender="#{frmSimulation.areaToRender}" immediate="true" styleClass="ui-button" />
+		</div>
+		
+		<div id="tabs-3" style="margin: 2px 2px 2px 2px; padding:0px;">
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.menuConfigsEnabled}" action="#{frmParameters.open}" reRender="#{frmParameters.areaToRender}" value="Configuration du Système"  title="Configurations Système" immediate="true" styleClass="ui-button"  />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.menuConfigsEnabled}" action="#{frmProfilMarchands.open}" reRender="#{frmProfilMarchands.areaToRender}" value="Configs Profil"  title="Configurations des profils marchnads" immediate="true" styleClass="ui-button"  />
+		</div>
+		
+		<div id="tabs-4" style="margin: 2px 2px 2px 2px; padding:0px;">
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.btnExecuteRapprochementEnabled}" action="#{frmRappCompensation.open}" reRender="#{frmRappCompensation.areaToRender}" value="Compensation"  title="Compensation des comptes DAP" immediate="true" styleClass="ui-button"  />
+			<a4j:commandButton style="background-color: #ffffff;color: black;border: 1px solid #A7A37E;border-radius: 8px;" rendered="#{userHabilitation.btnExecuteRapprochementEnabled}" action="#{frmRappImputation.open}" reRender="#{frmRappImputation.areaToRender}" value="Imputation"  title="Imputation des transactions" immediate="true" styleClass="ui-button"  />
+		</div>
+		
+	</div>
+
+</h:form>
+
+</f:view>

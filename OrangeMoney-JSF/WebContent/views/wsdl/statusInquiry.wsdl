@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://statusinquiry.b2w.orange.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="TransactionStatusInquiryImplService" targetNamespace="http://statusinquiry.b2w.orange.com/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://statusinquiry.b2w.orange.com/" elementFormDefault="unqualified" targetNamespace="http://statusinquiry.b2w.orange.com/" version="1.0">
+
+  <xs:element name="LastTransactions" type="tns:LastTransactions"/>
+
+  <xs:element name="LastTransactionsResponse" type="tns:LastTransactionsResponse"/>
+
+  <xs:element name="TransactionStatus" type="tns:transactionStatus"/>
+
+  <xs:element name="TransactionStatusInquiry" type="tns:TransactionStatusInquiry"/>
+
+  <xs:element name="TransactionStatusInquiryResponse" type="tns:TransactionStatusInquiryResponse"/>
+
+  <xs:element name="TypeID" type="tns:typeID"/>
+
+  <xs:element name="transaction" type="tns:transaction"/>
+
+  <xs:element name="transactions" type="tns:transactions"/>
+
+  <xs:complexType name="TransactionStatusInquiry">
+    <xs:sequence>
+      <xs:element name="typeID" type="tns:typeID"/>
+      <xs:element name="ID" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TransactionStatusInquiryResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="statusInquiry" type="tns:transactionStatus"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="transactionStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="returnCode" type="xs:string"/>
+      <xs:element minOccurs="0" name="transaction" type="tns:transaction"/>
+      <xs:element minOccurs="0" name="status" type="tns:globalStatus"/>
+      <xs:element minOccurs="0" name="detailedStatuses" type="tns:detailedStatuses"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="transaction">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="orangeID" type="xs:string"/>
+      <xs:element minOccurs="0" name="bankID" type="xs:string"/>
+      <xs:element minOccurs="0" name="dateTime" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="type" type="tns:transactionType"/>
+      <xs:element name="amount" type="xs:double"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="detailedStatuses">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="detailedStatus" nillable="true" type="tns:detailedStatus"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="detailedStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="step" type="tns:step"/>
+      <xs:element minOccurs="0" name="status" type="tns:stepStatus"/>
+      <xs:element minOccurs="0" name="requestDate" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LastTransactions">
+    <xs:sequence>
+      <xs:element name="alias" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LastTransactionsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="lastTransactions" type="tns:lastTransactions"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="lastTransactions">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="returnCode" type="xs:string"/>
+      <xs:element minOccurs="0" name="transactions" type="tns:transactions"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="transactions">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="transaction" nillable="true" type="tns:transaction"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="typeID">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BANK_ID"/>
+      <xs:enumeration value="ORANGE_ID"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="transactionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BANK2WALLET"/>
+      <xs:enumeration value="WALLET2BANK"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="globalStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OK"/>
+      <xs:enumeration value="ORANGE_RECONCILIATION"/>
+      <xs:enumeration value="BANK_RECONCILIATION"/>
+      <xs:enumeration value="ORANGE_BANK_RECONCILIATION"/>
+      <xs:enumeration value="KO"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="step">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ORANGE_CREDIT"/>
+      <xs:enumeration value="ORANGE_DEBIT"/>
+      <xs:enumeration value="ORANGE_AUTHORIZATION"/>
+      <xs:enumeration value="BANK_CREDIT"/>
+      <xs:enumeration value="BANK_DEBIT"/>
+      <xs:enumeration value="BANK_CANCEL"/>
+      <xs:enumeration value="BANK_STATUS_INQUIRY"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="stepStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OK"/>
+      <xs:enumeration value="TIMEOUT"/>
+      <xs:enumeration value="KO"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="LastTransactionsResponse">
+    <wsdl:part element="tns:LastTransactionsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="TransactionStatusInquiry">
+    <wsdl:part element="tns:TransactionStatusInquiry" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="TransactionStatusInquiryResponse">
+    <wsdl:part element="tns:TransactionStatusInquiryResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="LastTransactions">
+    <wsdl:part element="tns:LastTransactions" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="TransactionStatusInquiry">
+    <wsdl:operation name="TransactionStatusInquiry">
+      <wsdl:input message="tns:TransactionStatusInquiry" name="TransactionStatusInquiry">
+    </wsdl:input>
+      <wsdl:output message="tns:TransactionStatusInquiryResponse" name="TransactionStatusInquiryResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LastTransactions">
+      <wsdl:input message="tns:LastTransactions" name="LastTransactions">
+    </wsdl:input>
+      <wsdl:output message="tns:LastTransactionsResponse" name="LastTransactionsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TransactionStatusInquiryImplServiceSoapBinding" type="tns:TransactionStatusInquiry">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="TransactionStatusInquiry">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="TransactionStatusInquiry">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="TransactionStatusInquiryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LastTransactions">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="LastTransactions">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="LastTransactionsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TransactionStatusInquiryImplService">
+    <wsdl:port binding="tns:TransactionStatusInquiryImplServiceSoapBinding" name="TransactionStatusInquiryImplPort">
+      <soap:address location="https://b2w-sb.orange-money.com/status-inquiry/?bic=BNKSXGWE"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

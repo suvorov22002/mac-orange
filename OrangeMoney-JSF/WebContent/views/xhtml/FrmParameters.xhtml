@@ -1,0 +1,677 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j">
+
+<rich:panel styleClass="client-panel-body">
+<h:form prependId="false">
+
+	<style>
+		div#param-contain, div#coms-contain { overflow-y:scroll; height:250px; width: 800px; margin: 0px 0; }
+		div#param-contain, div#coms-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+		div#param-contain table td, div#param-contain table th { border: 1px solid #eee; padding: .2em 2px; text-align: left; }
+	</style>
+	
+	<a4j:jsFunction name="closeFrmParameters" reRender="#{frmParameters.areaToRender}" immediate="true" action="#{frmParameters.close}" />
+	
+	<script>
+
+		$( "#dialog-param" ).dialog({
+			autoOpen: true,
+			width: 950,
+			height: 510,
+			close: function() {
+				closeFrmParameters();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-param" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+		$(function() {
+			$( "#tabPrm" ).tabs();
+		});
+	</script>
+
+<div id="dialog-param" title="#{frmParameters.title}">
+
+	
+	<div id="tabPrm">
+		<ul>
+			<li><a href="#tabPrm-1">Parametres</a></li>
+			<li><a href="#tabPrm-2">Types de comptes autorises</a></li>
+			<li><a href="#tabPrm-3">Commissions et Frais</a></li>
+		</ul>
+		
+		<div id="tabPrm-1">
+		
+		
+			<fieldset><legend>Edition</legend>
+				<h:panelGrid id="gridFormParam" columns="9">
+				
+					<h:outputText  value="Taille de Allias :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.bankPINLength}" style="width:30px" maxlength="2" onkeypress="controleChiffres(event)">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="Valeur min :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.minPIN}" style="width:50px" maxlength="5" onkeypress="controleChiffres(event)">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="Valeur max :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxPIN}" style="width:50px" maxlength="5" onkeypress="controleChiffres(event)">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+				
+					<h:outputText  value="Nbre Max de cpte :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxAccounts}" style="width:30px" maxlength="2" onkeypress="controleChiffres(event)">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="Nbre max de N° de Tel :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxPhoneNumbers}" style="width:30px" maxlength="2" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Durée max des Transactions (sec.) :" style="font-weight:bold" rendered="false" />
+					<rich:spacer width="3px" rendered="false" />
+					<h:inputText class="text" rendered="false" value="#{frmParameters.params.trnsactionTimeOut}" style="width:50px" maxlength="3" onkeypress="controleChiffres(event)">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					<h:outputText  value="Adresse SDP Tests :" style="font-weight:bold" rendered="false" />
+					<rich:spacer width="3px" rendered="false" />
+					<h:inputText class="text" rendered="false" value="#{frmParameters.params.ipSDPTest}" style="width:100px" maxlength="20" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Adresse SDP Production :" style="font-weight:bold" rendered="false" />
+					<rich:spacer width="3px" rendered="false" />
+					<h:inputText class="text" rendered="false" value="#{frmParameters.params.addressSDPProd}" style="width:100px" maxlength="20" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="Code Utilisateur :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.uti}" style="width:50px" maxlength="5">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText  value="Code Opération comptabilisation : " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.codeOpeCompt}" style="width:30px" maxlength="3" onkeypress="controleChiffres(event)">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Code Opération transactions : " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.codeOpe}" style="width:30px" maxlength="3" onkeypress="controleChiffres(event)">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value=" " />
+					<h:outputText  value=" " />
+					<h:outputText  value=" " />
+					
+					
+					
+					<h:outputText  value="Montant max du Account To Walet :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxAWAmountTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="Montant max du Walet To Account :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxWAAmountTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value=" " />
+					<h:outputText  value=" " />
+					<h:outputText  value=" " />
+					
+					
+					
+					<h:outputText  value="Montant max Jour du Account To Walet :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxAWAmountDaysTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="Montant max Jour du Walet To Account :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxWAAmountDaysTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+								
+					<h:outputText  value="Montant max Hebdo du Account To Walet :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxAWAmountWeeksTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+				
+					<h:outputText  value="Montant max Hebdo du Walet To Account :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxWAAmountWeeksTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Montant max Mois du Account To Walet :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxAWAmountMonthsTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="Montant max Mois du Walet To Account:" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.maxWAAmountMonthsTrans}" style="width:80px" maxlength="15" onkeypress="controleChiffres(event)" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+				
+					<h:outputText  value="N° Cpte Orange :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpCliOrange}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+								
+					<h:outputText  value="N° Cpte DAP Walet To Account :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpDAPWaletAcount}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+				
+					<h:outputText  value="N° Cpte DAP Account To Walet :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpDAPAcountWalet}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+				
+					<h:outputText  value="DAP Orange :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpOrange}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="N° cpte commissions :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpCom}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+							
+					<h:outputText  value="N° cpte TVA Orange :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpTVAOrange}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText  value="N° cpte TVA :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpTVA}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="N° cpte Liaison :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.ncpLiaison}" maxlength="20" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Taux Comm Orange :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.tauxComOrange}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText  value="val TVA :" style="font-weight:bold"/>
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.tva}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Solde Min :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.soldeMin}" style="width:130px" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Code Prod Ncp Solde Min :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.plageCompte}" style="width:130px" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+								
+								
+					<h:outputText  value="Bank BIC :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.bankBIC}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="OperatorCode : " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.operatorCode}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="AffiliateCode :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.affiliateCode}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+								
+					<h:outputText  value="Allias:" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.allias}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Currency:" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.currency}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Idle Auto :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:selectBooleanCheckbox class="text" value="#{frmParameters.params.idleAuto}" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>	
+					
+					
+					
+					<h:outputText  value="URL Register:" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.registerService}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="URL Idle : " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.idlService}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+								
+					<h:outputText  value="URL Statut Inquiry:" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.inquiryService}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText  value="Mode Nuit ON/OFF :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:selectBooleanCheckbox class="text" value="#{frmParameters.params.modeNuit}" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+					
+					<h:outputText value="Périodicité exécution réconciliation :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" maxlength="2" onkeypress="javascript:controleChiffres(event);"
+						value="#{frmParameters.params.periodeLancementRobot}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Périodicité vérification réconciliation :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" maxlength="2" onkeypress="javascript:controleChiffres(event);"
+						value="#{frmParameters.params.periodeAlerte}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText  value="Reconciliation manuelle obligatoire? :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:selectBooleanCheckbox class="text" value="#{frmParameters.params.doReconciliation}" >
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
+					
+					<h:outputText value="Délai lancement réconciliation :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" maxlength="2" onkeypress="javascript:controleChiffres(event);"
+						value="#{frmParameters.params.delaiRobot}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Délai vérification réconciliation" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" maxlength="2" onkeypress="javascript:controleChiffres(event);"
+						value="#{frmParameters.params.delaiReconciliation}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+										
+										
+					
+					<h:outputText  value="Repertoire CBS: " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.filePathAmpli}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Nom Fichier : " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.fileNameAmpli}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+								
+					<h:outputText  value="Extension Fichier : " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" value="#{frmParameters.params.fileExtensionAmpli}"  style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText value="Adresse IP Serveur CBS :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.ipAdressAmpli}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+
+					<h:outputText value="Port Serveur CBS :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.portServerAmpli}"
+						onkeypress="javascript:controleChiffres(event);" maxlength="5"
+						style="width:40px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+
+					<h:outputText value="Login User CBS :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputSecret class="text"
+						value="#{frmParameters.params.userLoginServerAmpli}"
+						style="width:130px" redisplay="true">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputSecret>
+					
+					
+
+					<h:outputText value="Password User CBS : " style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputSecret class="text"
+						value="#{frmParameters.params.userPasswordServerAmpli}"
+						style="width:130px" redisplay="true">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputSecret>
+					
+					<h:outputText  value="Numéros Alertes SMS" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputTextarea class="text" value="#{frmParameters.params.numeroAlerteSMS}"  style="width:130px; height:40px;">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputTextarea>
+					
+					<h:outputText value="Repertoire sauvegarde :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.cheminSaveFile}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText value="Oppositions crédit :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.oppositions}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText  value="Types opérations : (XXX-XXX-XXX-XXX)" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputTextarea class="text" value="#{frmParameters.params.typeOpesDormant}"  style="width:130px; height:40px;">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputTextarea>
+					
+					<h:outputText value="Delai comptes dormants : (Mois)" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" maxlength="2" onkeypress="javascript:controleChiffres(event);"
+						value="#{frmParameters.params.delaiDormant}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText value="Host API Manager :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.hostApi}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Protocole API Manager :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.protocoleApi}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Delai nouveau compte : (Jours)" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" maxlength="2" onkeypress="javascript:controleChiffres(event);"
+						value="#{frmParameters.params.delaiNewAccount}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText value="Url Mail :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.urlMail}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>	
+					
+					<h:outputText value="Url SMS :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.urlSms}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Url Package :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.urlPackage}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText value="Url service CBS :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.urlCbsApi}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>	
+							
+					<h:outputText value="Port API Manager :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" onkeypress="javascript:controleChiffres(event);"
+						value="#{frmParameters.params.portApi}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>		
+						
+					<h:outputText value="Email Sender :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.email_sav}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					
+					
+					<h:outputText value="Token API CBS :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputSecret class="text"
+						value="#{frmParameters.params.tokenCbsApi}"
+						style="width:130px" redisplay="true">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputSecret>	
+										
+					<h:outputText value="Horaires resiliation CBS : (08-13-19)" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text"
+						value="#{frmParameters.params.heureVerifResiliation}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>
+					
+					<h:outputText value="Seuil réconciliation :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" onkeypress="javascript:controleChiffres(event);" maxlength="3"
+						value="#{frmParameters.params.seuilReconciliation}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>	
+					
+					
+					
+					<h:outputText value="Lot Transactions :" style="font-weight:bold" />
+					<rich:spacer width="3px" />
+					<h:inputText class="text" onkeypress="javascript:controleChiffres(event);" maxlength="4"
+						value="#{frmParameters.params.lotTransactions}" style="width:130px">
+						<a4j:support event="onchange" ajaxSingle="true" />
+					</h:inputText>	
+					
+							
+				</h:panelGrid>
+			</fieldset>
+	
+		</div>
+		
+		
+		<div id="tabPrm-2">
+		
+			<fieldset><legend><h:outputText value="Selectionner les types de compte Autorises" /></legend>
+				
+				<div id="param-contain">
+				<h:dataTable id="gridSouscriptions" value="#{frmParameters.types}" var="typ" styleClass="ui-widget ui-widget-content" headerClass="ui-widget-header" rowClasses="row-style-pair, row-style-impair">
+				
+					<h:column>
+						<f:facet name="header"><h:outputText value=" " /></f:facet>
+						<h:selectBooleanCheckbox value="#{typ.checked}">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header"><h:outputText value="Types de compte" /></f:facet>
+						<h:outputText value="#{typ.value}" />
+					</h:column>
+					
+				</h:dataTable>
+				</div>
+				
+			</fieldset>
+		</div>
+		
+		
+		<div id="tabPrm-3">
+		
+			<fieldset><legend><h:outputText value="Saisir les valeurs des commissions par types d'opérations" /></legend>
+				
+				<div id="coms-contain">
+				<h:dataTable id="gridCommissions" value="#{frmParameters.params.commissions}" var="com" styleClass="ui-widget ui-widget-content" headerClass="ui-widget-header" rowClasses="row-style-pair, row-style-impair">
+				
+					<h:column>
+						<f:facet name="header"><h:outputText value="Opération" /></f:facet>
+						<h:outputText value="#{com.operation.value}" />
+					</h:column>
+				
+					<h:column>
+						<f:facet name="header"><h:outputText value="Type de valeur" /></f:facet>
+						<h:selectOneMenu value="#{com.typeValeur}">
+							<f:selectItems value="#{frmParameters.typeValeurItems}" />
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header"><h:outputText value="Valeur" /></f:facet>
+						<h:inputText value="#{com.valeur}" class="text" style="width:80px" maxlength="10" onkeypress="controleChiffres(event)" >
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header"><h:outputText value="TVA (%)" /></f:facet>
+						<h:inputText value="#{com.tauxTVA}" class="text" style="width:30px" maxlength="10" onkeypress="controleChiffres(event)" >
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header"><h:outputText value="Mode de Facturation" /></f:facet>
+						<h:selectOneMenu value="#{com.modeFacturation}" disabled="#{!com.modeFacturationEnabled}">
+							<f:selectItems value="#{frmParameters.modeItems}" />
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+					</h:column>
+	
+					<h:column>
+						<f:facet name="header"><h:outputText value="Périodicité" /></f:facet>
+						<h:selectOneMenu value="#{com.periodFacturation}" disabled="#{!com.periodiciteFacturationEnabled}">
+							<f:selectItems value="#{frmParameters.periodItems}" />
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+					</h:column>
+					
+				</h:dataTable>
+				</div>
+				
+			</fieldset>
+		</div>
+		
+	</div>
+	
+	<h:panelGrid columns="2">
+		<a4j:commandButton rendered="#{userHabilitation.btnModifierConfigurationEnabled}" value="Enregistrer" action="#{frmParameters.savePamareters}" immediate="true" reRender="pnlMsg" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+	
+	</h:panelGrid>
+	
+</div>
+				
+
+
+</h:form>
+</rich:panel>
+
+</f:subview>

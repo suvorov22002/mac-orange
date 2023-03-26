@@ -1,0 +1,140 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:panel styleClass="client-panel-body">
+		<h:form prependId="false">
+
+			<a4j:jsFunction name="closeFrmTraceStatus"
+				reRender="#{frmTraceStatus.areaToRender}" immediate="true"
+				action="#{frmTraceStatus.close}" />
+
+			<script>
+
+		$( "#dialog-traceStatus" ).dialog({
+			autoOpen: true,
+			width: 700,
+			modal: true,
+			close: function() {
+				closeFrmTraceStatus();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-traceStatus" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+	</script>
+
+			<div id="dialog-traceStatus" title="#{frmTraceStatus.title}">
+
+				<fieldset>
+					<legend>Détail des informations </legend>
+					<h:panelGrid id="pnlInfos" columns="9">
+
+						<h:outputText value="Client : " />
+						<h:outputText
+							value="#{frmTraceStatus.currentObject.subscriber.customerName}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+
+						<h:outputText value="Téléphone :" />
+						<h:outputText value="#{frmTraceStatus.currentObject.phoneNumber}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+						
+						<h:outputText value="Compte : " />
+						<h:outputText value="#{frmTraceStatus.currentObject.account}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+
+
+						<h:outputText value="Operation : " />
+						<h:outputText
+							value="#{frmTraceStatus.currentObject.typeOperation.value}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+
+						<h:outputText value="Date Operation :" />
+						<h:outputText
+							value="#{frmTraceStatus.currentObject.formattedDate}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+
+						<h:outputText value="Montant : " />
+						<h:outputText value="#{frmTraceStatus.currentObject.ttc}"
+							style="font-weight:bold;">
+							<f:convertNumber integerOnly="true" />
+						</h:outputText>
+						<rich:spacer width="10px" />
+						
+						
+						<h:outputText value="Statut : " />
+						<h:outputText value="#{frmTraceStatus.currentObject.status}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+						
+						<h:outputText value="Réconciliée : " />
+						<h:outputText value="#{frmTraceStatus.currentObject.posted}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+						
+						<h:outputText value="Postée : " />
+						<h:outputText value="#{frmTraceStatus.currentObject.completed}"
+							style="font-weight:bold;" />
+						<rich:spacer width="10px" />
+
+					</h:panelGrid>
+				</fieldset>
+				
+				<fieldset>
+					<legend>Détail des informations partenaire </legend>
+					<h:panelGrid id="pnlInfosPart" columns="9">
+						<h:outputText value="Id Transaction : " />
+						<h:outputText
+							value="#{frmTraceStatus.currentObject.externalRefNo}"
+							style="font-weight:bold; color:#CC5500;" />
+						<rich:spacer width="10px" />
+						
+						<h:outputText value="Id Request : " />
+						<h:outputText
+							value="#{frmTraceStatus.currentObject.requestId}"
+							style="font-weight:bold; color:#CC5500;" />
+						<rich:spacer width="10px" />
+
+						<h:outputText value="Code erreur : " />
+						<h:outputText
+							value="#{frmTraceStatus.currentObject.exceptionCode}"
+							style="font-weight:bold; color:#CC5500;" />
+						<rich:spacer width="10px" />
+					</h:panelGrid>
+					
+					<h:panelGrid id="pnlStatus" columns="3">
+						<h:outputText value= "Détail statut Orange : " />
+						<h:outputText value="#{frmTraceStatus.currentObject.traceStatus}"
+							style="font-weight:bold; color:red;" />
+						<rich:spacer width="10px" />
+					</h:panelGrid>
+				</fieldset>
+
+			</div>
+
+
+
+		</h:form>
+	</rich:panel>
+
+</f:subview>

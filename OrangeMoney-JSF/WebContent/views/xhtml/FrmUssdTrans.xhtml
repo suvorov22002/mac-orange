@@ -1,0 +1,460 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:panel styleClass="client-panel-body">
+		<h:form prependId="false">
+
+			<style>
+div#trans-contain {
+	overflow-y: scroll;
+	height: 380px;
+	width: 1130px;
+	margin: 0px 0;
+}
+
+div#trans-contain table {
+	margin: 1em 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+div#trans-contain table td, div#trans-contain table th {
+	border: 1px solid #eee;
+	padding: .2em 2px;
+	text-align: left;
+}
+</style>
+
+			<a4j:jsFunction name="closeFrmUssdTrans"
+				reRender="#{frmUssdTrans.areaToRender}" immediate="true"
+				action="#{frmUssdTrans.close}" />
+
+			<script>
+
+		$( "#dialog-trans" ).dialog({
+			autoOpen: true,
+			width: 1180,
+			close: function() {
+				closeFrmUssdTrans();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-trans" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+
+		$(function() {
+			$(".datepicker").datepicker({
+			    showOn: "both",
+			    dateFormat: 'dd/mm/yy',
+			    buttonImage: "#{informationBean.graphicUIURL}/images/calendar.gif",
+			    buttonImageOnly: true
+			});
+		});
+		
+	</script>
+
+			<div id="dialog-trans" title="#{frmUssdTrans.title}">
+
+				<fieldset>
+					<legend>Recherche</legend>
+					<h:panelGrid columns="5" cellspacing="2" cellpadding="2">
+
+						<h:panelGrid columns="3">
+							<h:outputText value="Du :" />
+							<h:inputText class="datepicker" maxlength="10"
+								value="#{frmUssdTrans.txtDateDeb}"
+								converterMessage="la date indiquée doit être au format jj/MM/AAAA"
+								style="border: 1px solid #CCC; border-radius: 7px; background-color:aliceblue; color: black; border-color : darkgrey; font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif; font-weight:normal; font-size: 11px; width:75px ;height:20px;">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:inputText>
+							<h:selectOneMenu value="#{frmUssdTrans.txtHeureDebut}"
+								class="text">
+								<f:selectItems value="#{frmUssdTrans.itemsSelect}" />
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="3">
+							<h:outputText value="Au :" />
+							<h:inputText class="datepicker" maxlength="10"
+								value="#{frmUssdTrans.txtDateFin}"
+								converterMessage="la date indiquée doit être au format jj/MM/AAAA"
+								style="border: 1px solid #CCC; border-radius: 7px; background-color:aliceblue; color: black; border-color : darkgrey; font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif; font-weight:normal; font-size: 11px; width:75px ;height:20px;">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:inputText>
+							<h:selectOneMenu value="#{frmUssdTrans.txtHeureFin}" class="text">
+								<f:selectItems value="#{frmUssdTrans.itemsSelect}" />
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:outputText value="Operation :" />
+							<h:selectOneMenu value="#{frmUssdTrans.selectedTypOp}"
+								class="text">
+								<f:selectItems value="#{frmUssdTrans.typOpItem}" />
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+
+
+						<h:panelGrid columns="2">
+							<h:outputText value="État :" />
+							<h:selectOneMenu value="#{frmUssdTrans.selectedTypStatus}"
+								class="text">
+								<f:selectItems value="#{frmUssdTrans.typStatusItem}" />
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<rich:spacer width="5px" />
+							<a4j:commandButton
+								rendered="#{userHabilitation.menuUSSDTransEnabled}"
+								value="Rechercher" action="#{frmUssdTrans.filterTransactions}"
+								immediate="true" reRender="gridUssdTrans, pnlMsg"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+								onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:outputText value="compte :" />
+							<h:inputText class="text" value="#{frmUssdTrans.ncp}"
+								style="width:100px">
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:inputText>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:outputText value="Tel :" />
+							<h:inputText class="text" value="#{frmUssdTrans.tel}"
+								style="width:100px">
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:inputText>
+						</h:panelGrid>
+
+
+						<h:panelGrid columns="2">
+							<h:outputText value="Client :" />
+							<h:inputText class="text" value="#{frmUssdTrans.nom}"
+								style="width:100px">
+								<a4j:support event="onchange" ajaxSingle="true" />
+							</h:inputText>
+						</h:panelGrid>
+
+
+						<h:panelGrid columns="2">
+							<rich:spacer width="5px" />
+							<rich:spacer width="5px" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<rich:spacer width="5px" />
+							<a4j:commandButton
+								rendered="#{userHabilitation.menuUSSDTransEnabled}"
+								value="Rechercher avec statut Orange"
+								action="#{frmUssdTrans.filterTransactionsStatus}"
+								immediate="true" reRender="gridUssdTrans, pnlMsg"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+								onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+							<rich:spacer width="5px" />
+						</h:panelGrid>
+
+					</h:panelGrid>
+				</fieldset>
+
+				<fieldset>
+					<legend>Liste des Transactions </legend>
+
+					<div id="trans-contain">
+						<h:dataTable id="gridUssdTrans" value="#{frmUssdTrans.list}"
+							var="trans" styleClass="ui-widget ui-widget-content"
+							headerClass="ui-widget-header"
+							rowClasses="row-style-pair, row-style-impair">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Num" />
+								</f:facet>
+								<h:outputText value="#{frmUssdTrans.num}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Num Tel" />
+								</f:facet>
+								<h:outputText value="#{trans.phoneNumber}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Client" />
+								</f:facet>
+								<h:outputText value="#{trans.subscriber.customerName}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Operation" />
+								</f:facet>
+								<h:outputText value="#{trans.typeOperation.value}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date" />
+								</f:facet>
+								<h:outputText value="#{trans.formattedDate}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Heure" />
+								</f:facet>
+								<h:outputText value="#{trans.hour}" style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Montant" />
+								</f:facet>
+								<h:outputText value="#{trans.ttc}" style="color:#{trans.color}">
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Compte" />
+								</f:facet>
+								<h:outputText value="#{trans.account}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Code Erreur" />
+								</f:facet>
+								<h:outputText
+									value="#{trans.requestId} - #{trans.exceptionCode}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Code Resp" />
+								</f:facet>
+								<h:outputText value="#{trans.operatorCode}"
+									style="color:#{trans.color}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Posté?" />
+								</f:facet>
+								<h:graphicImage
+									value="#{informationBean.graphicUIURL}/images/#{trans.posted ? 'apply16x.png' : 'DeleteRed16x.png'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Completed" />
+								</f:facet>
+								<h:graphicImage
+									value="#{informationBean.graphicUIURL}/images/#{trans.completed ? 'ok16x.png' : 'DeleteRed16x.png'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Reverse Trans ?" />
+								</f:facet>
+								<h:outputText value="#{trans.reverseTrans}" style="color:blue" />
+							</h:column>
+
+							<h:column
+								rendered="#{userHabilitation.btnExecuteReconciliationEnabled}">
+								<f:facet name="header">
+									<h:outputText value="Reconcilier" />
+								</f:facet>
+								<h:graphicImage value="/views/img/edit16x.png"
+									title="Réconciliation manuelle détaillée" style="cursor:pointer">
+									<a4j:support event="onclick" rendered="#{!trans.completed}"
+										reRender="gridUssdTrans,pnlMsg" ajaxSingle="true"
+										onsubmit="startWaitInStyle();"
+										oncomplete="stoptWaitInStyle();">
+										<f:setPropertyActionListener
+											target="#{frmUssdTrans.transInComplete}" value="#{trans}" />
+									</a4j:support>
+								</h:graphicImage>
+							</h:column>
+
+							<h:column
+								rendered="#{userHabilitation.btnExecuteReconciliationEnabled}">
+								<f:facet name="header">
+									<h:outputText value="Get Status" />
+								</f:facet>
+								<h:graphicImage value="/views/img/controle.png"
+									title="Obtenir le status de la transaction chez Orange"
+									style="cursor:pointer">
+									<a4j:support event="onclick"
+										reRender="#{frmTraceStatus.areaToRender},pnlMsg"
+										ajaxSingle="true" onsubmit="startWaitInStyle();"
+										oncomplete="stoptWaitInStyle();">
+										<f:setPropertyActionListener
+											target="#{frmUssdTrans.transStatus}" value="#{trans}" />
+									</a4j:support>
+								</h:graphicImage>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Detail trans" />
+								</f:facet>
+								<h:graphicImage value="/views/img/initpwd.png"
+									title="consultation des traces de statut d'une transaction"
+									style="cursor:pointer">
+									<a4j:support event="onclick"
+										reRender="#{frmTraceStatus.areaToRender},pnlMsg"
+										ajaxSingle="true" onsubmit="startWaitInStyle();"
+										oncomplete="stoptWaitInStyle();">
+										<f:setPropertyActionListener
+											target="#{frmUssdTrans.transTraceStatus}" value="#{trans}" />
+									</a4j:support>
+								</h:graphicImage>
+							</h:column>
+
+						</h:dataTable>
+
+					</div>
+
+				</fieldset>
+
+
+				<table>
+
+					<tr>
+						<td valign="top">
+
+							<fieldset>
+								<legend>
+									<h:outputText value="Reporting" />
+								</legend>
+
+								<h:panelGrid id="pnlReport" columns="3">
+									<a4j:commandButton value="Exporter Excell"
+										action="#{frmUssdTrans.exportListeExcell}" immediate="true"
+										title="Cliquez ici pour exporter les transactions"
+										reRender="lnkExcelFile, pnlMsg"
+										styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+										onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+									<h:outputLink id="lnkExcelFile"
+										disabled="#{!frmUssdTrans.exportedFileExist}" target="_blank"
+										value="#{informationBean.downloadDataURL}/#{frmUssdTrans.exportFileName}">
+										<h:outputText value="#{frmUssdTrans.exportFileName}" />
+									</h:outputLink>
+								</h:panelGrid>
+
+							</fieldset>
+
+						</td>
+
+						<td valign="top">
+							<fieldset>
+								<legend>
+									<h:outputText value="Réconciliation manuelle" />
+								</legend>
+
+								<h:panelGrid id="pnlReconManuelle" columns="6">
+									<a4j:commandButton value="Exécuter"
+										action="#{frmUssdTrans.reconciliationManuelle}" immediate="true"
+										title="Réconciliation manuelle des transactions"
+										reRender="gridUssdTrans,pnlMsg"
+										styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+										onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+								</h:panelGrid>
+
+							</fieldset>
+						</td>
+					</tr>
+
+				</table>
+
+
+
+				<fieldset>
+					<legend>
+						<h:outputText value="Checking des réservations de fonds" />
+					</legend>
+					<h:panelGrid columns="10">
+
+						<h:outputText value="Heure Début : " style="font-weight:bold" />
+						<h:selectOneMenu value="#{frmUssdTrans.txtHeureDebut2}"
+							class="text">
+							<f:selectItems value="#{frmUssdTrans.itemsSelect}" />
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+
+
+						<h:outputText value="Heure Fin : " style="font-weight:bold" />
+						<h:selectOneMenu value="#{frmUssdTrans.txtHeureFin2}" class="text">
+							<f:selectItems value="#{frmUssdTrans.itemsSelect}" />
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:selectOneMenu>
+
+						<h:outputText value="Aprés TFJO veille ? : "
+							style="font-weight:bold" />
+						<h:selectBooleanCheckbox id="chbSig"
+							value="#{frmUssdTrans.afterTFJO}" class="text">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:selectBooleanCheckbox>
+
+						<a4j:commandButton value="Contrôle réservations"
+							action="#{frmUssdTrans.suiviReservationFond}" immediate="true"
+							title="Cliquez ici pour suivre la réservations de fonds des transactions"
+							reRender="lnkExcelFileReser, pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+						<h:outputLink id="lnkExcelFileReser"
+							disabled="#{!frmUssdTrans.exportedFileExistReser}"
+							target="_blank"
+							value="#{informationBean.downloadDataURL}/#{frmUssdTrans.exportFileNameReser}">
+							<h:outputText value="#{frmUssdTrans.exportFileNameReser}" />
+						</h:outputLink>
+
+					</h:panelGrid>
+				</fieldset>
+
+
+
+			</div>
+
+		</h:form>
+
+	</rich:panel>
+
+</f:subview>

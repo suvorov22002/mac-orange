@@ -1,0 +1,256 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:panel styleClass="client-panel-body">
+		<h:form prependId="false">
+
+			<style>
+div#souscrips-contain {
+	overflow-y: scroll;
+	height: 380px;
+	width: 970px;
+	margin: 0px 0;
+}
+
+div#souscrips-contain table {
+	margin: 1em 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+div#souscrips-contain table td, div#souscrips-contain table th {
+	border: 1px solid #eee;
+	padding: .2em 2px;
+	text-align: left;
+}
+</style>
+
+			<a4j:jsFunction name="closefrmProfilMarchands"
+				reRender="#{frmProfilMarchands.areaToRender}" immediate="true"
+				action="#{frmProfilMarchands.close}" />
+
+			<script>
+
+		$( "#dialog-frmProfilMarchands" ).dialog({
+			autoOpen: true,
+			width: 1000,
+			close: function() {
+				closefrmProfilMarchands();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-frmProfilMarchands" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+	</script>
+
+			<div id="dialog-frmProfilMarchands"
+				title="#{frmProfilMarchands.title}">
+
+				<fieldset>
+					<legend></legend>
+					<h:panelGrid columns="4">
+						<a4j:commandButton value="Ajouter"
+							action="#{frmProfilMarchands.processAdd}" immediate="true"
+							reRender="gridSouscriptions, pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+						<rich:spacer width="10 " />
+						<a4j:commandButton value="Enregister"
+							action="#{frmProfilMarchands.savePamareters}" immediate="true"
+							reRender="gridSouscriptions, pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+					</h:panelGrid>
+				</fieldset>
+
+				<fieldset>
+					<legend>Liste des Profils </legend>
+
+					<div id="souscrips-contain">
+						<h:dataTable id="gridSouscriptions"
+							value="#{frmProfilMarchands.plages}" var="sous"
+							styleClass="ui-widget ui-widget-content"
+							headerClass="ui-widget-header"
+							rowClasses="row-style-pair, row-style-impair">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Libelle" />
+								</f:facet>
+								<h:inputText value="#{sous.profilName}" 
+									onkeyup='this.value=this.value.toUpperCase()'>
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPullAmount" />
+								</f:facet>
+								<h:inputText id="txtmaxPullAmount" value="#{sous.maxPullAmountTrans}"
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+  									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPushAmount" />
+								</f:facet>
+								<h:inputText id="txtmaxPushAmount" value="#{sous.maxPushAmountTrans}"
+								 	onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPullAmountDay" />
+								</f:facet>
+								<h:inputText id="txtmaxPullAmountDay" value="#{sous.maxPullAmountDayTrans}" 
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange"  ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPushAmountDay" />
+								</f:facet>
+								<h:inputText id="txtmaxPushAmountDay" value="#{sous.maxPushAmountDayTrans}" 
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPullAmountWeek" />
+								</f:facet>
+								<h:inputText id="txtmaxPullAmountWeek" value="#{sous.maxPullAmountWeekTrans}" 
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPushAmountWeek" />
+								</f:facet>
+								<h:inputText id="txtmaxPushAmountWeek" value="#{sous.maxPushAmountWeekTrans}" 
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange"  ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPullAmountMonth" />
+								</f:facet>
+								<h:inputText id="txtmaxPullAmountMonth" value="#{sous.maxPullAmountMonthTrans}" 
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="maxPushAmountMonth" />
+								</f:facet>
+								<h:inputText id="txtmaxPushAmountMonth" value="#{sous.maxPushAmountMonthTrans}" 
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Commissions" />
+								</f:facet>
+								<h:inputText id="txtCommissions" value="#{sous.commissionsTrans}" 
+									onkeypress="javascript:controleChiffres(event);" maxlength="10">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="ncpDAPW2A" />
+								</f:facet>
+								<h:inputText value="#{sous.ncpDAPPush}" maxlength="20">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="ncpDAPA2W" />
+								</f:facet>
+								<h:inputText value="#{sous.ncpDAPPull}" maxlength="20">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="numCompteOrange" />
+								</f:facet>
+								<h:inputText value="#{sous.numCompteMTN}" maxlength="20">
+									<a4j:support event="onchange" ajaxSingle="true" />
+								</h:inputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Actif" />
+								</f:facet>
+								<h:graphicImage
+									value="#{informationBean.graphicUIURL}/images/#{sous.active ? 'ok16x.png' : 'DeleteRed16x.png'}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Act/Desact" />
+								</f:facet>
+								<h:selectBooleanCheckbox value="#{sous.active}"
+									id="cbx" style="font-weight:bold; font-size:12px;">
+									<a4j:support event="onclick" reRender="cbx, pnlVal"
+										ajaxSingle="true" onsubmit="startWaitInStyle();"
+										oncomplete="stoptWaitInStyle();">
+										<f:setPropertyActionListener
+											target="#{sous.validerDesact}" value="#{sous.active}" />
+									</a4j:support>
+								</h:selectBooleanCheckbox>
+							</h:column>
+
+						</h:dataTable>
+					</div>
+				</fieldset>
+
+			</div>
+
+
+
+		</h:form>
+	</rich:panel>
+
+</f:subview>

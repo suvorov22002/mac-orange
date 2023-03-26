@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="IB2WService" targetNamespace="http://b2w.banktowallet.com/b2w" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://b2w.banktowallet.com/b2w" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <xs:schema targetNamespace="http://b2w.banktowallet.com/b2w/1.0" version="1.0" xmlns:tns="http://b2w.banktowallet.com/b2w/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">  
+            <xs:complexType name="HeaderRequest">
+                <xs:sequence>
+                    <xs:element name="operatorCode" type="xs:string" />
+                    <xs:element name="requestId" type="xs:string" />
+                    <xs:element name="requestToken" type="xs:string" />
+                    <xs:element name="requestType" type="xs:string" />
+                    <xs:element name="affiliateCode" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="HeaderResponse">
+                <xs:sequence>
+                    <xs:element name="operatorCode" type="xs:string" />
+                    <xs:element name="requestId" type="xs:string" />
+                    <xs:element name="affiliateCode" type="xs:string" />
+                    <xs:element name="responseCode" type="xs:string" />
+                    <xs:element name="responseMessage" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TransactionDetail">
+                <xs:sequence>
+                    <xs:element name="tranRefNo" type="xs:string" />
+                    <xs:element name="tranDate" type="xs:dateTime" />
+                    <xs:element name="tranType" type="xs:string" />
+                    <xs:element name="ccy" type="xs:string" />
+                    <xs:element name="crDr" type="xs:string" />
+                    <xs:element name="amount" type="xs:double" />
+                    <xs:element name="narration" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema elementFormDefault="unqualified" targetNamespace="http://b2w.banktowallet.com/b2w" version="1.0" xmlns:ns1="http://b2w.banktowallet.com/b2w/1.0" xmlns:tns="http://b2w.banktowallet.com/b2w" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:import namespace="http://b2w.banktowallet.com/b2w/1.0" />
+            <xs:element name="AccountToWalletTransfer" type="tns:AccountToWalletTransfer" />
+            <xs:element name="AccountToWalletTransferResponse" type="tns:AccountToWalletTransferResponse" />
+            <xs:element name="CancelTransfer" type="tns:CancelTransfer" />
+            <xs:element name="CancelTransferResponse" type="tns:CancelTransferResponse" />
+            <xs:element name="GetAccountBalance" type="tns:GetAccountBalance" />
+            <xs:element name="GetAccountBalanceResponse" type="tns:GetAccountBalanceResponse" />
+            <xs:element name="GetMiniStatement" type="tns:GetMiniStatement" />
+            <xs:element name="GetMiniStatementResponse" type="tns:GetMiniStatementResponse" />
+            <xs:element name="TransferStatusInquiry" type="tns:TransferStatusInquiry" />
+            <xs:element name="TransferStatusInquiryResponse" type="tns:TransferStatusInquiryResponse" />
+            <xs:element name="WalletToAccountTransfer" type="tns:WalletToAccountTransfer" />
+            <xs:element name="WalletToAccountTransferResponse" type="tns:WalletToAccountTransferResponse" />
+            <xs:complexType name="CancelTransfer">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="TranRequestInfo">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderRequest" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="CancelTransferResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderResponse" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                                <xs:element name="CBAReferenceNo" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="WalletToAccountTransfer">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="MobileTransferRequest">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderRequest" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                                <xs:element name="mobileNo" type="xs:string" />
+                                <xs:element name="mobileName" type="xs:string" />
+                                <xs:element name="mobileAlias" type="xs:string" />
+                                <xs:element name="accountNo" type="xs:string" />
+                                <xs:element name="accountAlias" type="xs:string" />
+                                <xs:element name="accountName" type="xs:string" />
+                                <xs:element name="transferDescription" type="xs:string" />
+                                <xs:element name="ccy" type="xs:string" />
+                                <xs:element name="amount" type="xs:double" />
+                                <xs:element name="charge" type="xs:double" />
+                                <xs:element name="tranDate" type="xs:dateTime" />
+                                <xs:element name="udf1" type="xs:string" />
+                                <xs:element name="udf2" type="xs:string" />
+                                <xs:element name="udf3" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="WalletToAccountTransferResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderResponse" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                                <xs:element name="CBAReferenceNo" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="AccountToWalletTransfer">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="MobileTransferRequest">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderRequest" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                                <xs:element name="mobileNo" type="xs:string" />
+                                <xs:element name="mobileName" type="xs:string" />
+                                <xs:element name="mobileAlias" type="xs:string" />
+                                <xs:element name="accountNo" type="xs:string" />
+                                <xs:element name="accountAlias" type="xs:string" />
+                                <xs:element name="accountName" type="xs:string" />
+                                <xs:element name="transferDescription" type="xs:string" />
+                                <xs:element name="ccy" type="xs:string" />
+                                <xs:element name="amount" type="xs:double" />
+                                <xs:element name="charge" type="xs:double" />
+                                <xs:element name="tranDate" type="xs:dateTime" />
+                                <xs:element name="udf1" type="xs:string" />
+                                <xs:element name="udf2" type="xs:string" />
+                                <xs:element name="udf3" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="AccountToWalletTransferResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderResponse" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                                <xs:element name="CBAReferenceNo" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="GetAccountBalance">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="AccountBalanceInquiryRequest">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderRequest" />
+                                <xs:element name="accountNo" type="xs:string" />
+                                <xs:element name="accountAlias" type="xs:string" />
+                                <xs:element name="reason" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="GetAccountBalanceResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderResponse" />
+                                <xs:element name="accountNo" type="xs:string" />
+                                <xs:element name="accountAlias" type="xs:string" />
+                                <xs:element name="accountName" type="xs:string" />
+                                <xs:element name="ccy" type="xs:string" />
+                                <xs:element name="branchCode" type="xs:string" />
+                                <xs:element name="availableBalance" type="xs:double" />
+                                <xs:element name="currentBalance" type="xs:double" />
+                                <xs:element name="accountType" type="xs:string" />
+                                <xs:element name="accountClass" type="xs:string" />
+                                <xs:element name="accountStatus" type="xs:string" />
+                                <xs:element name="udf1" type="xs:string" />
+                                <xs:element name="udf2" type="xs:string" />
+                                <xs:element name="udf3" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TransferStatusInquiry">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="TranRequestInfo">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderRequest" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TransferStatusInquiryResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderResponse" />
+                                <xs:element name="externalRefNo" type="xs:string" />
+                                <xs:element name="CBAReferenceNo" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="GetMiniStatement">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="MiniStatementRequest">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderRequest" />
+                                <xs:element name="accountNo" type="xs:string" />
+                                <xs:element name="accountAlias" type="xs:string" />
+                                <xs:element name="reason" type="xs:string" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="GetMiniStatementResponse">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="return">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="mmHeaderInfo" type="ns1:HeaderResponse" />
+                                <xs:element maxOccurs="unbounded" minOccurs="0" name="TransactionList" type="ns1:TransactionDetail" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="AccountToWalletTransfer">
+        <wsdl:part element="tns:AccountToWalletTransfer" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="GetAccountBalanceResponse">
+        <wsdl:part element="tns:GetAccountBalanceResponse" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="TransferStatusInquiryResponse">
+        <wsdl:part element="tns:TransferStatusInquiryResponse" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="GetMiniStatement">
+        <wsdl:part element="tns:GetMiniStatement" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="WalletToAccountTransferResponse">
+        <wsdl:part element="tns:WalletToAccountTransferResponse" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="TransferStatusInquiry">
+        <wsdl:part element="tns:TransferStatusInquiry" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="AccountToWalletTransferResponse">
+        <wsdl:part element="tns:AccountToWalletTransferResponse" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="CancelTransferResponse">
+        <wsdl:part element="tns:CancelTransferResponse" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="GetMiniStatementResponse">
+        <wsdl:part element="tns:GetMiniStatementResponse" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="WalletToAccountTransfer">
+        <wsdl:part element="tns:WalletToAccountTransfer" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="GetAccountBalance">
+        <wsdl:part element="tns:GetAccountBalance" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="CancelTransfer">
+        <wsdl:part element="tns:CancelTransfer" name="parameters"></wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="B2WServices">
+        <wsdl:operation name="CancelTransfer">
+            <wsdl:input message="tns:CancelTransfer" name="CancelTransfer"></wsdl:input>
+            <wsdl:output message="tns:CancelTransferResponse" name="CancelTransferResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="WalletToAccountTransfer">
+            <wsdl:input message="tns:WalletToAccountTransfer" name="WalletToAccountTransfer"></wsdl:input>
+            <wsdl:output message="tns:WalletToAccountTransferResponse" name="WalletToAccountTransferResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AccountToWalletTransfer">
+            <wsdl:input message="tns:AccountToWalletTransfer" name="AccountToWalletTransfer"></wsdl:input>
+            <wsdl:output message="tns:AccountToWalletTransferResponse" name="AccountToWalletTransferResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetAccountBalance">
+            <wsdl:input message="tns:GetAccountBalance" name="GetAccountBalance"></wsdl:input>
+            <wsdl:output message="tns:GetAccountBalanceResponse" name="GetAccountBalanceResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="TransferStatusInquiry">
+            <wsdl:input message="tns:TransferStatusInquiry" name="TransferStatusInquiry"></wsdl:input>
+            <wsdl:output message="tns:TransferStatusInquiryResponse" name="TransferStatusInquiryResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetMiniStatement">
+            <wsdl:input message="tns:GetMiniStatement" name="GetMiniStatement"></wsdl:input>
+            <wsdl:output message="tns:GetMiniStatementResponse" name="GetMiniStatementResponse"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+	
+    <wsdl:binding name="IB2WServiceSoapBinding" type="tns:B2WServices">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="CancelTransfer">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="CancelTransfer">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="CancelTransferResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AccountToWalletTransfer">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="AccountToWalletTransfer">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="AccountToWalletTransferResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="WalletToAccountTransfer">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="WalletToAccountTransfer">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="WalletToAccountTransferResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetAccountBalance">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="GetAccountBalance">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="GetAccountBalanceResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="TransferStatusInquiry">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="TransferStatusInquiry">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="TransferStatusInquiryResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetMiniStatement">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="GetMiniStatement">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="GetMiniStatementResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="IB2WService">
+        <wsdl:port binding="tns:IB2WServiceSoapBinding" name="B2WServicesPort">
+            <soap:address location="EXPOSED_URL" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,277 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:panel styleClass="client-panel-body">
+		<h:form prependId="false">
+
+			<style>
+div#phone-contain account-contain {
+	overflow-y: scroll;
+	height: 100px;
+	width: 150px;
+	margin: 0px 0;
+}
+
+div#phone-contain account-contain table {
+	margin: 1em 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+div#phone-contain account-contain table td, div#phone-contain account-contain table th
+	{
+	border: 1px solid #eee;
+	padding: .2em 2px;
+	text-align: left;
+}
+</style>
+
+			<a4j:jsFunction name="closeFrmSubscriber"
+				reRender="#{frmSubscriber.areaToRender}" immediate="true"
+				action="#{frmSubscriber.close}" />
+
+			<script>
+		$("#dialog-subscriber" ).dialog({
+			autoOpen: true,
+			width: 520,
+			close: function() {
+				closeFrmSubscriber();
+			}
+		});
+		
+		$(function() {
+			$("#dialog-subscriber" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+		});
+	</script>
+
+			<div id="dialog-subscriber" title="#{frmSubscriber.title}">
+
+
+				<fieldset>
+					<legend>Recherche du client</legend>
+					<h:panelGrid id="panelSearch" columns="5">
+
+						<h:outputText value="Code du client :" style="font-weight:bold;" />
+						<rich:spacer width="3px" />
+						<h:inputText class="text" value="#{frmSubscriber.txtCustomerId}"
+							style="width:80px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<rich:spacer width="3px" />
+						<a4j:commandButton value="Rechercher"
+							action="#{frmSubscriber.findSubscriberFromCBS}" immediate="true"
+							reRender="gridFormSubscriber, gridPhonesAndAccounts, omwaletSearch, omwalet, gridConfirm, pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+					</h:panelGrid>
+				</fieldset>
+
+				<fieldset>
+					<legend>Souscription</legend>
+					<h:panelGrid id="gridFormSubscriber" columns="3">
+
+						<h:outputText value="Nom du Client :" style="font-weight:bold;" />
+						<rich:spacer width="5px" />
+						<h:inputText disabled="true" class="text"
+							value="#{frmSubscriber.subscriber.customerName}" readonly="true"
+							style="width:350px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<h:outputText value="Adresse :" style="font-weight:bold;" />
+						<rich:spacer width="5px" />
+						<h:inputText disabled="true" class="text"
+							value="#{frmSubscriber.subscriber.customerAddress}"
+							readonly="true" style="width:350px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+					</h:panelGrid>
+
+					<h:panelGrid id="gridPhonesAndAccounts" columns="5">
+
+						<h:outputText value="Compte : "
+							style="font-weight:bold; color:red;" />
+						<h:selectOneMenu value="#{frmSubscriber.selectedAccount}"
+							id="cbxAccount" class="text">
+							<f:selectItems value="#{frmSubscriber.accountItem}" />
+							<a4j:support event="onchange"
+								action="#{frmSubscriber.checkSelectedAccount}"
+								reRender="cbxPhone, pnlMsg" ajaxSingle="true"
+								oncomplete="stoptWaitInStyle(); window.open('#{frmSubscriber.urlSignature}', '_blank', 'toolbar=0,location=0,menubar=0');" />
+						</h:selectOneMenu>
+
+						<rich:spacer width="10px" />
+
+						<h:outputText value="Téléphone : "
+							style="font-weight:bold; color:red;" />
+						<h:selectOneMenu value="#{frmSubscriber.selectedPhone}"
+							disabled="#{!frmSubscriber.accountChecked}" id="cbxPhone"
+							class="text">
+							<f:selectItems value="#{frmSubscriber.phoneItem}" />
+							<a4j:support event="onchange"
+								reRender="cmdKYC, txtTelephone, pnlMsg" ajaxSingle="true" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+
+				</fieldset>
+
+
+				<fieldset>
+					<legend>Recherche du client</legend>
+					<h:panelGrid id="omwaletSearch" columns="9">
+
+						<h:outputText value="N° de Telephone :" style="font-weight:bold;" />
+						<rich:spacer width="3px" />
+						<h:inputText class="text" readonly="true"
+							value="#{frmSubscriber.selectedPhone}" id="txtTelephone"
+							style="width:80px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<h:outputText value="key :" style="font-weight:bold;" />
+						<rich:spacer width="3px" />
+						<h:inputText class="text" value="#{frmSubscriber.subkey}"
+							disabled="#{frmSubscriber.confirmOtp}" style="width:80px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<rich:spacer width="3px" />
+						<rich:spacer width="3px" />
+						<a4j:commandButton value="Rechercher" id="cmdKYC"
+							disabled="#{!frmSubscriber.telephoneChecked}"
+							action="#{frmSubscriber.findSubscriberFromOmW}" immediate="true"
+							reRender="omwalet,pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+					</h:panelGrid>
+
+
+					<h:panelGrid id="omwalet" columns="3">
+
+						<h:outputText value="Firstname :" style="font-weight:bold;" />
+						<rich:spacer width="5px" />
+						<h:inputText disabled="true" class="text"
+							value="#{frmSubscriber.subscriber.subfirstname}" readonly="true"
+							style="width:350px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<h:outputText value="Lastname :" style="font-weight:bold;" />
+						<rich:spacer width="5px" />
+						<h:inputText disabled="true" class="text"
+							value="#{frmSubscriber.subscriber.sublastname}" readonly="true"
+							style="width:350px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<h:outputText value="Dob :" style="font-weight:bold;" />
+						<rich:spacer width="5px" />
+						<h:inputText disabled="true" class="text"
+							value="#{frmSubscriber.subscriber.subdob}" readonly="true"
+							style="width:350px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<h:outputText value="Cin :" style="font-weight:bold;" />
+						<rich:spacer width="5px" />
+						<h:inputText disabled="true" class="text"
+							value="#{frmSubscriber.subscriber.subcin}" readonly="true"
+							style="width:350px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+					</h:panelGrid>
+
+				</fieldset>
+
+
+				<br />
+				<table style="width: 100%">
+					<tr align="right">
+
+						<td align="right"><h:panelGrid columns="2"
+								style="align:right">
+								<a4j:commandButton disabled="#{frmSubscriber.confirmOtp}"
+									id="cmdSave"
+									rendered="#{userHabilitation.btnValiderSouscriptionEnabled}"
+									ajaxSingle="true" value="Générer OTP"
+									action="#{frmSubscriber.saveSouscription}" immediate="true"
+									reRender="gridConfirm,panelSearch, cbxLangue, gridFormSubscriber,gridFormSubscriber,gridPhonesAndAccounts,omwaletSearch,omwalet,pnlMsg,cmdSave,cmdConfirm "
+									styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+									onsubmit="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+							</h:panelGrid></td>
+
+					</tr>
+				</table>
+
+
+				<fieldset>
+					<legend>
+						<h:outputText value="Confirmation abonnement" />
+					</legend>
+					<div id="abonnement-contain">
+						<h:panelGrid columns="3">
+							<h:dataTable id="gridConfirm" value="#{frmSubscriber.list}"
+								var="value" styleClass="ui-widget ui-widget-content"
+								headerClass="ui-widget-header"
+								rowClasses="row-style-pair, row-style-impair">
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="" />
+									</f:facet>
+									<h:outputText value="#{value}"
+										style="font-weight:bold; color : red;" />
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="" />
+									</f:facet>
+									<h:inputText class="text" value="#{frmSubscriber.otp}"
+										maxlength="4" onkeypress="controleChiffres(event)"
+										style="width:100px">
+										<a4j:support event="onchange" ajaxSingle="true" />
+									</h:inputText>
+								</h:column>
+
+							</h:dataTable>
+
+							<rich:spacer width="25px" />
+							<a4j:commandButton id="cmdConfirm"
+								rendered="#{userHabilitation.btnValiderSouscriptionEnabled}"
+								value="Enregistrer" action="#{frmSubscriber.confirmAbonnement}"
+								immediate="true" disabled="#{!frmSubscriber.confirmOtp}"
+								reRender="panelSearch, gridFormSubscriber,gridFormSubscriber,gridPhonesAndAccounts,omwaletSearch,omwalet,pnlMsg, cbxLangue, cmdConfirm, gridConfirm, pnlReportViewwer"
+								styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+								onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+
+						</h:panelGrid>
+					</div>
+				</fieldset>
+
+			</div>
+
+		</h:form>
+	</rich:panel>
+
+</f:subview>

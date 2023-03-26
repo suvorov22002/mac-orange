@@ -1,0 +1,247 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:panel styleClass="client-panel-body">
+		<h:form prependId="false">
+
+			<style>
+div#cumulTransacs-contain {
+	overflow-y: scroll;
+	height: 380px;
+	width: 950px;
+	margin: 0px 0;
+}
+
+div#cumulTransacs-contain table {
+	margin: 1em 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+div#cumulTransacs-contain table td, div#cumulTransacs-contain table th {
+	border: 1px solid #eee;
+	padding: .2em 2px;
+	text-align: left;
+}
+</style>
+
+			<a4j:jsFunction name="closeFrmCumulTransaction"
+				reRender="#{frmCumulTransaction.areaToRender}" immediate="true"
+				action="#{frmCumulTransaction.close}" />
+
+			<script>
+
+		$( "#dialog-cumulTransaction" ).dialog({
+			autoOpen: true,
+			width: 1000,
+			close: function() {
+				closeFrmCumulTransaction();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-cumulTransaction" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+	</script>
+
+			<div id="dialog-cumulTransaction" title="#{frmCumulTransaction.title}">
+
+				<fieldset>
+					<legend>Recherche</legend>
+					<h:panelGrid columns="14">
+
+						<h:outputText value="Code client :" />
+						<rich:spacer width="3px" />
+						<h:inputText class="text" maxlength="7"
+							onkeypress="controleChiffres(event)"
+							value="#{frmCumulTransaction.txtSearchCustId}" style="width:80px">
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<h:outputText value="Nom du client :" />
+						<rich:spacer width="3px" />
+						<h:inputText class="text" style="width:200px"
+							value="#{frmCumulTransaction.txtSearchClient}"
+							onkeyup='this.value=this.value.toUpperCase()'>
+							<a4j:support event="onchange" ajaxSingle="true" />
+						</h:inputText>
+
+						<rich:spacer width="3px" />
+						<a4j:commandButton
+							rendered="#{userHabilitation.btnConsulterSouscriptionsEnabled}"
+							value="Rechercher"
+							action="#{frmCumulTransaction.filterSouscriptions}" immediate="true"
+							reRender="gridCumulTransaction, pnlMsg"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+							onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+					</h:panelGrid>
+				</fieldset>
+
+				<fieldset>
+					<legend>Liste des cumuls</legend>
+
+					<div id="cumulTransacs-contain">
+						<h:dataTable id="gridCumulTransaction"
+							value="#{frmCumulTransaction.souscriptions}" var="sous"
+							styleClass="ui-widget ui-widget-content"
+							headerClass="ui-widget-header"
+							rowClasses="row-style-pair, row-style-impair">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="N°" />
+								</f:facet>
+								<h:outputText value="#{frmCumulTransaction.num}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Client" />
+								</f:facet>
+								<h:outputText value="#{sous.customerName}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Compte(s)" />
+								</f:facet>
+								<h:outputText value="#{sous.firstAccount}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="N° Telephone(s)" />
+								</f:facet>
+								<h:outputText value="#{sous.firstPhone}" />
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Cumul Day AW" />
+								</f:facet>
+								<h:outputText value="#{sous.amountLimitAW}" style="color:blue;" >
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date Limit AW" />
+								</f:facet>
+								<h:outputText value="#{sous.formattedDateCrtlLimitAW}" />
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Cumul Day WA" />
+								</f:facet>
+								<h:outputText value="#{sous.amountLimitWA}" style="color:blue;" >
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date Limit WA" />
+								</f:facet>
+								<h:outputText value="#{sous.formattedDateCrtlLimitWA}" />
+							</h:column>
+							
+														
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Cumul Week AW" />
+								</f:facet>
+								<h:outputText value="#{sous.amountLimitAWWeek}" style="color:blue;" >
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date Limit AW Week" />
+								</f:facet>
+								<h:outputText value="#{sous.formattedDateCrtlLimitAWWeek}" />
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Cumul Week WA" />
+								</f:facet>
+								<h:outputText value="#{sous.amountLimitWAWeek}" style="color:blue;" >
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date Limit WA Week" />
+								</f:facet>
+								<h:outputText value="#{sous.formattedDateCrtlLimitWAWeek}" />
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Cumul Month AW" />
+								</f:facet>
+								<h:outputText value="#{sous.amountLimitAWMonth}" style="color:blue;" >
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date Limit AW Month" />
+								</f:facet>
+								<h:outputText value="#{sous.formattedDateCrtlLimitAWMonth}" />
+							</h:column>
+							
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Cumul Month WA" />
+								</f:facet>
+								<h:outputText value="#{sous.amountLimitWAMonth}" style="color:blue;" >
+									<f:convertNumber integerOnly="true" />
+								</h:outputText>
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Date Limit WA Month" />
+								</f:facet>
+								<h:outputText value="#{sous.formattedDateCrtlLimitWAMonth}" />
+							</h:column>
+
+						</h:dataTable>
+					</div>
+				</fieldset>
+
+
+			</div>
+
+
+
+		</h:form>
+	</rich:panel>
+
+</f:subview>

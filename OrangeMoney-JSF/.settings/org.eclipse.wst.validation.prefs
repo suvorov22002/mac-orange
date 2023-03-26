@@ -1,0 +1,10 @@
+#Tue Apr 26 17:45:28 CEST 2016
+DELEGATES_PREFERENCE=delegateValidatorList
+USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.eclipse.wst.common.componentcore.internal.ModuleCoreValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.eclipse.bpel.validator.Validator;org.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.jboss.tools.seam.internal.core.validation.SeamProjectPropertyValidator;
+USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.wst.common.componentcore.internal.ModuleCoreValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.eclipse.bpel.validator.Validator;org.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.jboss.tools.seam.internal.core.validation.SeamProjectPropertyValidator;
+USER_PREFERENCE=overrideGlobalPreferencestruedisableAllValidationfalseversion1.2.104.v200911120201
+disabled=120WebContent/axis2-web
+eclipse.preferences.version=1
+override=true
+suspend=false
+vf.version=3

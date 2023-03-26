@@ -1,0 +1,19 @@
+#Thu Apr 21 18:12:33 CEST 2016
+eclipse.preferences.version=1
+encoding//JavaSource/com/btow/om/register/RegisterBindingStub.java=UTF-8
+encoding//JavaSource/com/btow/om/register/RegisterPort.java=UTF-8
+encoding//JavaSource/com/btow/om/register/RegisterService.java=UTF-8
+encoding//JavaSource/com/btow/om/register/RegisterServiceLocator.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/DetailedStatus.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/GlobalStatus.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/LastTransactions.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/Step.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/StepStatus.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/Transaction.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/TransactionStatus.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/TransactionStatusInquiryImplService.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/TransactionStatusInquiryImplServiceLocator.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/TransactionStatusInquiryImplServiceSoapBindingStub.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/TransactionStatusInquiry_PortType.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/TransactionType.java=UTF-8
+encoding//JavaSource/com/orange/b2w/statusinquiry/TypeID.java=UTF-8

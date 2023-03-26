@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSpy v2015 sp2 (x64) (http://www.altova.com) by Harold Leboulanger (Thales) -->
+<definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://om.btow.com/register" name="Register" targetNamespace="http://om.btow.com/register">
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Register"/>
+	</types>
+	<wsdl:message name="REGREQ">
+		<wsdl:part name="msisdn" type="xsd:string"/>
+		<wsdl:part name="alias" type="xsd:string"/>
+		<wsdl:part name="code_service" type="xsd:short"/>
+		<wsdl:part name="libelle" type="xsd:string"/>
+		<wsdl:part name="devise" type="xsd:string"/>
+		<wsdl:part name="key" type="xsd:string"/>
+		<wsdl:part name="active_date" type="xsd:dateTime"/>
+	</wsdl:message>
+	<wsdl:message name="REGRES">
+		<wsdl:part name="alias" type="xsd:string"/>
+		<wsdl:part name="return_code" type="xsd:short"/>
+	</wsdl:message>
+	<wsdl:message name="DELREQ">
+		<wsdl:part name="alias" type="xsd:string"/>
+		<wsdl:part name="close_date" type="xsd:dateTime"/>
+		<wsdl:part name="orig" type="xsd:string"/>
+		<wsdl:part name="motif" type="xsd:string"/>
+	</wsdl:message>
+	<wsdl:message name="DELRES">
+		<wsdl:part name="alias" type="xsd:string"/>
+		<wsdl:part name="return_code" type="xsd:string"/>
+	</wsdl:message>
+	<wsdl:message name="KYCREQ">
+		<wsdl:part name="msisdn" type="xsd:string"/>
+		<wsdl:part name="key" type="xsd:string"/>
+	</wsdl:message>
+	<wsdl:message name="KYCRES">
+		<wsdl:part name="status" type="xsd:string"/>
+		<wsdl:part name="lastname" type="xsd:string"/>
+		<wsdl:part name="firstname" type="xsd:string"/>
+		<wsdl:part name="dob" type="xsd:string"/>
+		<wsdl:part name="cin" type="xsd:string"/>
+	</wsdl:message>
+	<portType name="RegisterPort">
+		<wsdl:documentation>Port Inscription</wsdl:documentation>
+		<operation name="ombRequest">
+			<wsdl:documentation>Demande inscription</wsdl:documentation>
+			<input name="REGREQ" message="ns1:REGREQ"/>
+			<output name="REGRES" message="ns1:REGRES"/>
+		</operation>
+		<wsdl:operation name="ombClose">
+			<wsdl:documentation>Cloture inscription</wsdl:documentation>
+			<wsdl:input name="DELREQ" message="ns1:DELREQ"/>
+			<wsdl:output name="DELRES" message="ns1:DELRES"/>
+		</wsdl:operation>
+		<wsdl:operation name="KYCRequest">
+			<wsdl:input name="KYCREQ" message="ns1:KYCREQ"/>
+			<wsdl:output name="KYCRES" message="ns1:KYCRES"/>
+		</wsdl:operation>
+	</portType>
+	<binding name="RegisterBinding" type="ns1:RegisterPort">
+		<wsdl:documentation>Binding Inscription</wsdl:documentation>
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ombRequest">
+			<wsdl:documentation>Creation inscription</wsdl:documentation>
+			<soap:operation soapAction="urn:#doRegister" style="rpc"/>
+			<wsdl:input name="REGREQ">
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output name="REGRES">
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="ombClose">
+			<wsdl:documentation>Cloture inscription</wsdl:documentation>
+			<soap:operation soapAction="urn:#doClose" style="rpc"/>
+			<wsdl:input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="KYCRequest">
+			<soap:operation soapAction="urn:#NewOperation"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</binding>
+	<service name="RegisterService">
+		<documentation>Service d'inscription OM-Banking </documentation>
+		<port name="RegisterPort" binding="ns1:RegisterBinding">
+			<soap:address location="https://b2w-sb.orange-money.com/register/?bic=BNKSXGWE"/>
+		</port>
+	</service>
+</definitions>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="OrangeMoney">
+        <wb-resource deploy-path="/" source-path="/EarContent"/>
+        <dependent-module archiveName="OrangeMoney.ear" deploy-path="/" handle="module:/resource/OrangeMoney/OrangeMoney">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="OrangeMoney-Business.jar" deploy-path="/" handle="module:/resource/OrangeMoney-Business/OrangeMoney-Business">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="OrangeMoney-Client.jar" deploy-path="/" handle="module:/resource/OrangeMoney-Client/OrangeMoney-Client">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="OrangeMoney-DAO.jar" deploy-path="/" handle="module:/resource/OrangeMoney-DAO/OrangeMoney-DAO">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="OrangeMoney-JPA.jar" deploy-path="/" handle="module:/resource/OrangeMoney-JPA/OrangeMoney-JPA">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="OrangeMoney-JSF.war" deploy-path="/" handle="module:/resource/OrangeMoney-JSF/OrangeMoney-JSF">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="service.war" deploy-path="/" handle="module:/resource/service/service">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="OrangeMoney.ear" deploy-path="/" handle="module:/resource/OrangeMoney/OrangeMoney">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>

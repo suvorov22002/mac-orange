@@ -1,0 +1,138 @@
+<f:subview xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j">
+
+<rich:panel styleClass="client-panel-body">
+<h:form prependId="false">
+
+	<style>
+		div#tfjo-contain { overflow-y:scroll; height:380px; width: 870px; margin: 0px 0; }
+		div#tfjo-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+		div#tfjo-contain table td, div#tfjo-contain table th { border: 1px solid #eee; padding: .2em 2px; text-align: left; }
+	</style>
+	
+	<a4j:jsFunction name="closeFrmTFJO" reRender="#{frmTFJO.areaToRender}" immediate="true" action="#{frmTFJO.close}" />
+	
+	<script>
+
+		$( "#dialog-tfjo" ).dialog({
+			autoOpen: true,
+			width: 900,
+			close: function() {
+				closeFrmTFJO();
+			}
+		});
+		
+		$(function() {
+			$( "#dialog-tfjo" ).dialog({
+				autoOpen: false,
+				show: {
+					effect: "scale",
+					duration: 1000
+				},
+				hide: {
+					effect: "explode",
+					duration: 1000
+				}
+			});
+
+		});
+	</script>
+
+<div id="dialog-tfjo" title="#{frmTFJO.title}">
+
+
+	<fieldset><legend>Commandes</legend>
+		<h:panelGrid columns="9" id="pnlCommands">
+			<a4j:commandButton rendered="#{userHabilitation.btnExecuterTFJOEnabled}" value="Abonnements à Comptabiliser" title="Charger les abonnements à comptabiliser" action="#{frmTFJO.executerTFJO}" immediate="true" reRender="gridTFJO, pnlMsg, totauxTFJO" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+			<rich:spacer width="3px" />
+			<a4j:commandButton rendered="#{userHabilitation.btnExportTFJOExcelEnabled}" value="Consulter EC" title="Extraire les écritures comptables des transactions selectionnées et les extraire dans un fichier Excel" action="#{frmTFJO.extraireECSousExcel}" immediate="true" reRender="lnkExcelFile, pnlCommands, pnlMsg, totauxTFJO" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+			
+			<rich:spacer width="3px" />
+			<a4j:commandButton rendered="#{userHabilitation.btnExecuterTFJOEnabled}" value="Regul Abonnements à Comptabiliser" title="Charger les reguls des abonnements à comptabiliser" action="#{frmTFJO.executerRegulTFJO}" immediate="true" reRender="gridTFJO, pnlMsg, totauxTFJO" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+			<rich:spacer width="3px" />
+			<a4j:commandButton rendered="#{userHabilitation.btnValiderTFJOEnabled}" value="Exécuter la Comptabilisation" title="Valider la comptabilisation pour les opérations sélectionnées (NB : Cette action va poster les écritures comptables nécessaires dans Amplitude)" action="#{frmTFJO.validerTFJO}" immediate="true" reRender="gridTFJO, pnlMsg, #{frmTransactions.frmRapportName}, pnlInfoTotaux, totauxTFJO" styleClass="ui-button ui-widget ui-state-default ui-corner-all" onclick="startWaitInStyle();" oncomplete="stoptWaitInStyle();" />
+			<rich:spacer width="3px" />
+			<h:outputLink id="lnkExcelFile" rendered="#{frmTFJO.exportedFileExist}" target="_blank" value="#{informationBean.downloadDataURL}/#{frmTFJO.exportFileName}"> <h:outputText value="#{frmTFJO.exportFileName}" /> </h:outputLink>
+		</h:panelGrid>
+	</fieldset>
+	
+		
+	<fieldset><legend><h:outputText value="Liste des Opérations à Comptabiliser" /></legend>
+	
+		<div id="tfjo-contain">
+			<h:dataTable id="gridTFJO" value="#{frmTFJO.list}" var="tfjo" styleClass="ui-widget ui-widget-content" headerClass="ui-widget-header" rowClasses="row-style-pair, row-style-impair">
+							
+				<h:column>
+					<f:facet name="header"><h:outputText value="N°" /></f:facet>
+					<h:outputText value="#{frmTFJO.num}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="Client" /></f:facet>
+					<h:outputText value="#{tfjo.subscriber.customerName}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="Date Traitement" /></f:facet>
+					<h:outputText value="#{tfjo.formattedDate}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="Periodicité" /></f:facet>
+					<h:outputText value="#{tfjo.subscriber.period.value}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="Date Sousc." /></f:facet>
+					<h:outputText value="#{tfjo.subscriber.formattedDate}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="Date Dern. Facturation" /></f:facet>
+					<h:outputText value="#{tfjo.subscriber.formattedLastFactDate}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="N° Compte" /></f:facet>
+					<h:outputText value="#{tfjo.subscriber.firstAccount}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="N° Tel." /></f:facet>
+					<h:outputText value="#{tfjo.subscriber.firstPhone}" />
+				</h:column>
+				
+				<h:column>
+					<f:facet name="header"><h:outputText value="Montant" /></f:facet>
+					<h:outputText value="#{tfjo.commissions}" />
+				</h:column>
+					
+				<h:column>
+					<f:facet name="header"><h:outputText value="Taxes" /></f:facet>
+					<h:outputText value="#{tfjo.ttc - tfjo.commissions}" />
+				</h:column>
+					
+				<h:column>
+					<f:facet name="header"><h:outputText value="Validé?" /></f:facet>
+					<h:graphicImage value="#{informationBean.graphicUIURL}/images/#{tfjo.posted ? 'apply16x.png' : 'DeleteRed16x.png'}" />
+				</h:column>
+					
+			</h:dataTable>
+		</div>
+	</fieldset>
+	
+</div>
+
+
+</h:form>
+
+
+
+
+</rich:panel>
+
+</f:subview>
