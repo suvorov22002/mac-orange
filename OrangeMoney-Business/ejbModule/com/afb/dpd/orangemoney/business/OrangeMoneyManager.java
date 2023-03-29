@@ -1495,8 +1495,9 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 
 		
 		// Initialisations
-		ResultSet /*rsCpteOrange = null, rsCpteAbonne = null, rsCpteComsOrange = null,rsCpteComsBank = null, rsCpteTVAOrange = null, rsCpteTVABank = null, rsCpteLiaison = null, */ rsLiaison = null , rsLiaisonCentral = null;
-		Bkcom bkCpteOrange = null, bkCpteComsOrange = null, bkCpteComsBank = null, bkCpteTVAOrange = null, bkCpteTVABank = null, bkLiaisonHippo = null, bkCpteLiaison = null;
+		/*ResultSet rsCpteOrange = null, rsCpteAbonne = null, rsCpteComsOrange = null,rsCpteComsBank = null, rsCpteTVAOrange = null, rsCpteTVABank = null, rsCpteLiaison = null,  rsLiaison = null , rsLiaisonCentral = null*/;
+		Bkcom bkCpteOrange = null, bkCpteComsOrange = null, bkCpteComsBank = null, bkCpteTVAOrange = null, bkCpteTVABank = null, bkLiaisonHippo = null, bkCpteLiaison = null, 
+				bkLiaison = null, bkLiaisonCentral = null;
 		Map<TypeOperation, Commissions> mapComs = ConverterUtil.convertCollectionToMap(params.getCommissions(), "operation");
 
 		Long numEc = 1l;
@@ -1514,6 +1515,8 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 		Double valeurCom = transaction.getCommissions();
 		Double valeurTax = transaction.getTtc() - transaction.getCommissions();
 		Date dateTransaction = transaction.getDate() != null ? transaction.getDate() : new Date();
+		
+		String ssDco = DateUtil.format(dco, DateUtil.DATE_TIME_MINUS_FORMAT_);
 
 		String natMag = "VIRORMO";
 		String natIag = "VIRORMO";
@@ -1616,9 +1619,10 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 			    bkCpteComsOrange = accountInfos(params.getNcpOrange());
 			if(bkCpteComsOrange == null) throw new Exception("Impossible de trouver le compte de commission");
 
-			rsLiaisonCentral = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+params.getNumCompteCommissions().split("-")[0]+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
-			if(rsLiaisonCentral == null || !rsLiaisonCentral.next()) throw new Exception("Impossible de trouver le compte de liaison de l'agence "+params.getNumCompteCommissions().split("-")[0]);
-			if(rsLiaisonCentral != null) rsLiaisonCentral.next();
+			//rsLiaisonCentral = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+params.getNumCompteCommissions().split("-")[0]+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
+			bkLiaisonCentral = accountInfos(params.getNumCompteCommissions());
+			if(bkLiaisonCentral == null) throw new Exception("Impossible de trouver le compte de liaison de l'agence "+params.getNumCompteCommissions().split("-")[0]);
+			//if(rsLiaisonCentral != null) rsLiaisonCentral.next();
 
 			// Si le numero de cpte TVA a ete parametre
 			if(params.getNumCompteTVA() != null && !params.getNumCompteTVA().isEmpty())
@@ -1656,23 +1660,23 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 		if(eve.getNat().equals(natIag) || eve.getNat().equals(natMag)){
 
 			// Recuperation du compte de liaison de l'agence du client
-			rsCpteLiaison = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+ custAcc.getAgence() +"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
+			//rsCpteLiaison = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+ custAcc.getAgence() +"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
+			bkCpteLiaison = accountInfos(custAcc.getAgence() + "-" + params.getNumCompteLiaison());
 			
-			rsLiaisonHippo = null
 			// Recuperation du compte de liaison d'hippodrome
 			String age ="00001";
 			if(bkCpteOrange != null){
 				age = bkCpteOrange.getAge();
 			}
-			rsLiaisonHippo = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom  where dev='001' and age='"+age+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
-
+			//rsLiaisonHippo = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom  where dev='001' and age='"+age+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
+			bkLiaisonHippo = accountInfos(age + "-" + params.getNumCompteLiaison());
 			// Si le compte de liaison existe
-			if(rsCpteLiaison == null || !rsCpteLiaison.next()) {
+			if(bkCpteLiaison == null) {
 				throw new Exception("Impossible de trouver le compte de liaison de l'agence " + custAcc.getAgence());
 			}
 
 			// Si le compte de liaison d'hippodrome n'existe pas
-			if(rsLiaisonHippo == null || !rsLiaisonHippo.next()) {
+			if(bkLiaisonHippo == null) {
 				throw new Exception("Impossible de trouver le compte de liaison de l'agence d'hippodrome " );
 			}
 
@@ -1685,13 +1689,15 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 			if ( valeurCom > 0 ){
 
 				// Ajout du debiteur
+				Date dvaEvecustAccD = getDvaDebit(ssDco, custAcc.getNcp());
 				eve.setDebiteur(custAcc.getAgence(), custAcc.getCodeDevise(), custAcc.getNcp(), custAcc.getSuffixe(), custAcc.getCle(), 
 						custAcc.getCodeClient(), customer.getNom(), customer.getCodeGes(), transaction.getAmount() + valeurCom, 
-						transaction.getAmount() + valeurCom, null, custAcc.getSde());
+						transaction.getAmount() + valeurCom, dvaEvecustAccD, custAcc.getSde());
 
 				// Ajout du debiteur
+				Date dvaEveComsBankC = getDvaDebit(ssDco, bkCpteComsBank.getNcp());
 				if(bkCpteComsBank != null ) eve.setCrediteur(bkCpteComsBank.getAge(), bkCpteComsBank.getDev(), bkCpteComsBank.getNcp(), bkCpteComsBank.getSuf(),
-						bkCpteComsBank.getClc(), bkCpteComsBank.getCli(), bkCpteComsBank.getInti(), "   ", valeurCom, valeurCom, null, bkCpteComsBank.getSde());
+						bkCpteComsBank.getClc(), bkCpteComsBank.getCli(), bkCpteComsBank.getInti(), "   ", valeurCom, valeurCom, dvaEveComsBankC, bkCpteComsBank.getSde());
 
 				// Libelle de l'evenement 
 				if( transaction.getTypeOperation().equals(TypeOperation.SUBSCRIPTION))
@@ -1714,12 +1720,14 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 			//rsCpteOrange = executeFilterSystemQuery(dsCBS, OgMoHelper.getDefaultCBSQueries().get(8).getQuery(), new Object[]{ ncpDAP.split("-")[0], ncpDAP.split("-")[1], ncpDAP.split("-")[2] });
 
 			// Ajout du debiteur
+			Date dvaEvecustAccD = getDvaDebit(ssDco, bkCpteOrange.getNcp());
 			eve.setDebiteur(custAcc.getAgence(), custAcc.getCodeDevise(), custAcc.getNcp(), custAcc.getSuffixe(), custAcc.getCle(), custAcc.getCodeClient(),
-					customer.getNom(), customer.getCodeGes(), transaction.getAmount(), transaction.getAmount(), null, custAcc.getSde());
+					customer.getNom(), customer.getCodeGes(), transaction.getAmount(), transaction.getAmount(), dvaEvecustAccD, custAcc.getSde());
 
 			// Ajout du crediteur
+			Date dvaEveOrangeC = getDvaCredit(ssDco, bkCpteOrange.getNcp());
 			if(bkCpteOrange != null) eve.setCrediteur(bkCpteOrange.getAge(), bkCpteOrange.getDev(), bkCpteOrange.getNcp(), bkCpteOrange.getSuf(), 
-					bkCpteOrange.getClc(), bkCpteOrange.getCli(), bkCpteOrange.getInti(), "", transaction.getAmount(), transaction.getAmount(), null, bkCpteOrange.getSde());
+					bkCpteOrange.getClc(), bkCpteOrange.getCli(), bkCpteOrange.getInti(), "", transaction.getAmount(), transaction.getAmount(), dvaEveOrangeC, bkCpteOrange.getSde());
 
 			// Libelle de l'evenement
 			//MODIF*** eve.setLib1(transaction.getPhoneNumber()+"/"+datop+"/Bank2Wallet");
@@ -1733,12 +1741,14 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 			//rsCpteOrange = executeFilterSystemQuery(dsCBS, OgMoHelper.getDefaultCBSQueries().get(8).getQuery(), new Object[]{ ncpDAP.split("-")[0], ncpDAP.split("-")[1], ncpDAP.split("-")[2] });
 
 			// Ajout du crediteur
+			Date dvaEveCustAccC = getDvaCredit(ssDco, custAcc.getNcp());
 			eve.setCrediteur(custAcc.getAgence(), custAcc.getCodeDevise(), custAcc.getNcp(), custAcc.getSuffixe(), custAcc.getCle(), custAcc.getCodeClient(), 
-					customer.getNom(), customer.getCodeGes(), transaction.getAmount(), transaction.getAmount(), null, custAcc.getSde());
+					customer.getNom(), customer.getCodeGes(), transaction.getAmount(), transaction.getAmount(), dvaEveCustAccC, custAcc.getSde());
 
 			// Ajout du debiteur
+			Date dvaEveOrangeD = getDvaDebit(ssDco, bkCpteOrange.getNcp());
 			if(bkCpteOrange != null) eve.setDebiteur(bkCpteOrange.getAge(), bkCpteOrange.getDev(), bkCpteOrange.getNcp(), bkCpteOrange.getSuf(), 
-					bkCpteOrange.getClc(), bkCpteOrange.getCli(), bkCpteOrange.getInti(), "", transaction.getAmount(), transaction.getAmount(), null, bkCpteOrange.getSde());
+					bkCpteOrange.getClc(), bkCpteOrange.getCli(), bkCpteOrange.getInti(), "", transaction.getAmount(), transaction.getAmount(), dvaEveOrangeD, bkCpteOrange.getSde());
 
 			// Libelle de l'evenement
 			//MODIF*** eve.setLib1(transaction.getPhoneNumber()+"/"+datop+"/Wallet2Bank");
@@ -1754,24 +1764,40 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 		if(transaction.getTypeOperation().equals(TypeOperation.Account2Wallet)){ // && mapComs.get(TypeOperation.Account2Wallet).getModeFacturation().equals(ModeFacturation.TRANSACTION) ) {
 
 			// Debit du client du TTC
+			Date dvaCptecustAccD = getDvaDebit(ssDco, custAcc.getNcp());
 			eve.getEcritures().add( new bkmvti(custAcc.getAgence(), custAcc.getCodeDevise(), custAcc.getChapitre(), custAcc.getNcp(), custAcc.getSuffixe(), 
 					params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null,
-					params.getCodeUtil(), eve.getEve(), custAcc.getCle(), dco, null, null, transaction.getAmount() + valeurCom + valeurTax, "D",
+					params.getCodeUtil(), eve.getEve(), custAcc.getCle(), dco, null, dvaCptecustAccD, transaction.getAmount() + valeurCom + valeurTax, "D",
 					transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"A2W", "N", pie, null, null, null, null, 
 					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, custAcc.getAgence(), custAcc.getCodeDevise(), 
 					transaction.getAmount() + valeurCom + valeurTax, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 			
 			if(!custAcc.getAgence().equalsIgnoreCase(bkCpteOrange.getAge())){
 				// Credit de la liaison du client du TTC
-				if(rsCpteLiaison != null) eve.getEcritures().add( new bkmvti(rsCpteLiaison.getString("age"), rsCpteLiaison.getString("dev"), rsCpteLiaison.getString("cha"), rsCpteLiaison.getString("ncp"), rsCpteLiaison.getString("suf"), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), rsCpteLiaison.getString("clc"), dco, null, rsCpteLiaison.getDate("dva"), transaction.getAmount() + valeurCom + valeurTax, "C",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"A2W", "O", pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, rsCpteLiaison.getString("age"), rsCpteLiaison.getString("dev"), transaction.getAmount() + valeurCom + valeurTax, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				if(bkCpteLiaison != null) { 
+					Date dvaCpteLiaisonC = getDvaCredit(ssDco, bkCpteLiaison.getNcp());
+					eve.getEcritures().add( new bkmvti(bkCpteLiaison.getAge(), bkCpteLiaison.getDev(), bkCpteLiaison.getCha(), bkCpteLiaison.getNcp(), bkCpteLiaison.getSuf(), params.getCodeOperation(), 
+						OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), bkCpteLiaison.getClc(), dco, null,
+						dvaCpteLiaisonC, transaction.getAmount() + valeurCom + valeurTax, "C",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"A2W", "O", pie, null, 
+						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkCpteLiaison.getAge(), bkCpteLiaison.getDev(), transaction.getAmount() + valeurCom + valeurTax,
+						null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				}
 
 				// Debit de la liaison d'hippodromme du TTC
-				if(rsLiaisonHippo != null) eve.getEcritures().add( new bkmvti(rsLiaisonHippo.getString("age"), rsLiaisonHippo.getString("dev"), rsLiaisonHippo.getString("cha"), rsLiaisonHippo.getString("ncp"), rsLiaisonHippo.getString("suf"), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), rsLiaisonHippo.getString("clc"), dco, null, rsLiaisonHippo.getDate("dva"), transaction.getAmount() + valeurCom + valeurTax, "D",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"A2W", "O", pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, rsLiaisonHippo.getString("age"), rsLiaisonHippo.getString("dev"), transaction.getAmount() + valeurCom + valeurTax, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				if(bkLiaisonHippo != null) { 
+					Date dvaCpteLiaisonHippoD = getDvaDebit(ssDco, bkLiaisonHippo.getNcp());
+					eve.getEcritures().add( new bkmvti(bkLiaisonHippo.getAge(), bkLiaisonHippo.getDev(), bkLiaisonHippo.getCha(), bkLiaisonHippo.getNcp(), bkLiaisonHippo.getSuf(), 
+						params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), 
+						bkLiaisonHippo.getClc(), dco, null, dvaCpteLiaisonHippoD, transaction.getAmount() + valeurCom + valeurTax, "D",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"A2W", "O", 
+						pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkLiaisonHippo.getAge(), bkLiaisonHippo.getDev(), transaction.getAmount() + valeurCom + valeurTax, 
+						null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				}
 			}
 			// Credit du cpte MTN du HT
+			Date dvaCpteOrangeC = getDvaCredit(ssDco, bkCpteOrange.getNcp());
 			eve.getEcritures().add(new bkmvti(bkCpteOrange.getAge(), bkCpteOrange.getDev(), bkCpteOrange.getCha(), bkCpteOrange.getNcp(), bkCpteOrange.getSuf(),
 					params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, 
-					params.getCodeUtil(), eve.getEve(), bkCpteOrange.getClc(), dco, null, null, transaction.getAmount(), "C",
+					params.getCodeUtil(), eve.getEve(), bkCpteOrange.getClc(), dco, null, dvaCpteOrangeC, transaction.getAmount(), "C",
 					transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"A2W", "N", pie, null, null, null, null, 
 					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkCpteOrange.getAge(), bkCpteOrange.getDev(),
 					transaction.getAmount(), null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
@@ -1780,24 +1806,36 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 		}else if(transaction.getTypeOperation().equals(TypeOperation.Wallet2Account)){   // && mapComs.get(TypeOperation.Wallet2Account).getModeFacturation().equals(ModeFacturation.TRANSACTION)) {
 
 			// Debit du cpte MTN du montant HT
+			Date dvaCpteOrangeD = getDvaDebit(ssDco, bkCpteOrange.getNcp());
 			eve.getEcritures().add( new bkmvti(bkCpteOrange.getAge(), bkCpteOrange.getDev(), bkCpteOrange.getCha(), bkCpteOrange.getNcp(), bkCpteOrange.getSuf(), 
 					params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, 
-					params.getCodeUtil(), eve.getEve(), bkCpteOrange.getClc(), dco, null, null, transaction.getAmount(), "D",
+					params.getCodeUtil(), eve.getEve(), bkCpteOrange.getClc(), dco, null, dvaCpteOrangeD, transaction.getAmount(), "D",
 					transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"W2A", "N", pie, null, null, null, null,
 					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkCpteOrange.getAge(), bkCpteOrange.getDev(),
 					transaction.getAmount(), null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 			
 			if(!custAcc.getAgence().equalsIgnoreCase(bkCpteOrange.getAge())){
 				// Credit de la liaison d'hippodrome du HT
-				if(rsLiaisonHippo != null) eve.getEcritures().add( new bkmvti(rsLiaisonHippo.getString("age"), rsLiaisonHippo.getString("dev"), rsLiaisonHippo.getString("cha"), rsLiaisonHippo.getString("ncp"), rsLiaisonHippo.getString("suf"), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), rsLiaisonHippo.getString("clc"), dco, null, rsLiaisonHippo.getDate("dva"), transaction.getAmount(), "C",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"W2A", "O", pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, rsLiaisonHippo.getString("age"), rsLiaisonHippo.getString("dev"), transaction.getAmount(), null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				Date dvaCpteLiaisonHippoC = getDvaCredit(ssDco, bkLiaisonHippo.getNcp());
+				if(bkLiaisonHippo != null) eve.getEcritures().add( new bkmvti(bkLiaisonHippo.getAge(), bkLiaisonHippo.getDev(), bkLiaisonHippo.getCha(), bkLiaisonHippo.getNcp(), bkLiaisonHippo.getSuf(), 
+						params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), 
+						bkLiaisonHippo.getClc(), dco, null, dvaCpteLiaisonHippoC, transaction.getAmount(), "C",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"W2A", "O",
+						pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkLiaisonHippo.getAge(), bkLiaisonHippo.getDev(), transaction.getAmount(), null, null, null, null, null, 
+						transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 
 				// Debit de la liaison du client du HT
-				if(rsCpteLiaison != null) eve.getEcritures().add( new bkmvti(rsCpteLiaison.getString("age"), rsCpteLiaison.getString("dev"), rsCpteLiaison.getString("cha"), rsCpteLiaison.getString("ncp"), rsCpteLiaison.getString("suf"), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), rsCpteLiaison.getString("clc"), dco, null, rsCpteLiaison.getDate("dva"), transaction.getAmount(), "D",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"W2A", "O", pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, rsCpteLiaison.getString("age"), rsCpteLiaison.getString("dev"), transaction.getAmount(), null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				Date dvaCpteLiaisonD = getDvaDebit(ssDco, bkCpteLiaison.getNcp());
+				if(bkCpteLiaison != null) eve.getEcritures().add( new bkmvti(bkCpteLiaison.getAge(), bkCpteLiaison.getDev(), bkCpteLiaison.getCha(), bkCpteLiaison.getNcp(), bkCpteLiaison.getSuf(), params.getCodeOperation(), 
+						OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), bkCpteLiaison.getClc(), dco, null, dvaCpteLiaisonD, 
+						transaction.getAmount(), "D",transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"W2A", "O", pie, null, null, null, null,
+						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkCpteLiaison.getAge(), bkCpteLiaison.getDev(), transaction.getAmount(), null, null, null, null, null, 
+						transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 			}
 			// Credit du cpte client du HT
+			Date dvaCpteCustAccC = getDvaCredit(ssDco, custAcc.getNcp());
 			eve.getEcritures().add( new bkmvti(custAcc.getAgence(), custAcc.getCodeDevise(), custAcc.getChapitre(), custAcc.getNcp(), custAcc.getSuffixe(), 
 					params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, 
-					params.getCodeUtil(), eve.getEve(), custAcc.getCle(), dco, null, null, transaction.getAmount(), "C",
+					params.getCodeUtil(), eve.getEve(), custAcc.getCle(), dco, null, dvaCpteCustAccC, transaction.getAmount(), "C",
 					transaction.getPhoneNumber()+"/"+new SimpleDateFormat("ddMMyyHHmm").format(dateTransaction)+"/"+"W2A", "N", pie, null, null, null, null, 
 					null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, custAcc.getAgence(), custAcc.getCodeDevise(),
 					transaction.getAmount(), null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
@@ -1810,53 +1848,61 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 			String lib = eve.getLib1();
 
 			// Ecriture Comptable Commission Afriland 
+			Date dvaCpteCustAccD = getDvaDebit(ssDco, custAcc.getNcp());
 			eve.getEcritures().add( new bkmvti(custAcc.getAgence(), custAcc.getCodeDevise(), custAcc.getChapitre(), custAcc.getNcp(), custAcc.getSuffixe(), 
 					params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, 
-					params.getCodeUtil(), eve.getEve(), custAcc.getCle(), dco, null, null, valeurCom, "D", lib, "N", pie, null, null, null, null, null, null, 
+					params.getCodeUtil(), eve.getEve(), custAcc.getCle(), dco, null, dvaCpteCustAccD, valeurCom, "D", lib, "N", pie, null, null, null, null, null, null, 
 					null, null, null, null, null, null, null, null, null, null, null, null, null, null, custAcc.getAgence(), custAcc.getCodeDevise(), 
 					valeurCom + valeurTax, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 			
 			if(!custAcc.getAgence().equalsIgnoreCase(bkCpteComsBank.getAge())){
 				
 				// Debit de la liaison du client du HT
-				rsCpteLiaison = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+custAcc.getAgence()+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
-				if(rsCpteLiaison != null){
-					rsCpteLiaison.next();
-					eve.getEcritures().add( new bkmvti(rsCpteLiaison.getString("age"), rsCpteLiaison.getString("dev"), rsCpteLiaison.getString("cha"), rsCpteLiaison.getString("ncp"), rsCpteLiaison.getString("suf"), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), rsCpteLiaison.getString("clc"), dco, null, rsCpteLiaison.getDate("dva"), valeurCom, "C",lib, "O", pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, rsCpteLiaison.getString("age"), rsCpteLiaison.getString("dev"), valeurCom, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				//rsCpteLiaison = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+custAcc.getAgence()+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
+				bkCpteLiaison = accountInfos(custAcc.getAgence() + "-" + params.getNumCompteLiaison());
+				if(bkCpteLiaison != null){
+					Date dvaCpteLiaisonC = getDvaCredit(ssDco, bkCpteLiaison.getNcp());
+					eve.getEcritures().add( new bkmvti(bkCpteLiaison.getAge(), bkCpteLiaison.getDev(), bkCpteLiaison.getCha(), bkCpteLiaison.getNcp(), bkCpteLiaison.getSuf(), 
+							params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(),
+							bkCpteLiaison.getClc(), dco, null, dvaCpteLiaisonC, valeurCom, "C",lib, "O", pie, null, null, null, null, null, null, null, null, null, null, null,
+							null, null, null, null, null, null, null, null, null, bkCpteLiaison.getAge(), bkCpteLiaison.getDev(), valeurCom, null, null, null, null, null, 
+							transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 				}
 				
-				CloseStream.fermeturesStream(rsLiaisonCentral);
+				
 				// Credit de la liaison d'hippodrome du HT
-				rsLiaisonCentral = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+bkCpteComsBank.getAge()+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
-				if(rsLiaisonCentral != null){ 
-					rsLiaisonCentral.next();
-					eve.getEcritures().add( new bkmvti(rsLiaisonCentral.getString("age"), rsLiaisonCentral.getString("dev"), rsLiaisonCentral.getString("cha"), rsLiaisonCentral.getString("ncp"), rsLiaisonCentral.getString("suf"), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(), rsLiaisonCentral.getString("clc"), dco, null, rsLiaisonCentral.getDate("dva"), valeurCom, "D",lib, "O", pie, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, rsLiaisonCentral.getString("age"), rsLiaisonCentral.getString("dev"), valeurCom, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
+				//rsLiaisonCentral = executeFilterSystemQuery(dsCBS, "select age, dev, cha, ncp, suf, clc, dva, sde, inti, utic from bkcom where dev='001' and age='"+bkCpteComsBank.getAge()+"' and ncp='"+ params.getNumCompteLiaison() +"'", null);
+				bkLiaisonCentral = accountInfos(bkCpteComsBank.getAge() + "-" + params.getNumCompteLiaison());
+				if(bkLiaisonCentral != null){ 
+					Date dvaCpteLiaisonCentralD = getDvaDebit(ssDco, bkLiaisonCentral.getNcp());
+					eve.getEcritures().add( new bkmvti(bkLiaisonCentral.getAge(), bkLiaisonCentral.getDev(), bkLiaisonCentral.getCha(), bkLiaisonCentral.getNcp(), bkLiaisonCentral.getSuf(), 
+							params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), null, params.getCodeUtil(), eve.getEve(),
+							bkLiaisonCentral.getClc(), dco, null, dvaCpteLiaisonCentralD, valeurCom, "D",lib, "O", pie, null, null, null, null, null, null, null, null, null, null,
+							null, null, null, null, null, null, null, null, null, null, bkLiaisonCentral.getAge(), bkLiaisonCentral.getDev(), valeurCom, null, null, null, null, null, 
+							transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 				}
 			}
 			if(!transaction.getTypeOperation().equals(TypeOperation.SUBSCRIPTION)){
 				// Ecriture Comission Bank
-
+				Date dvaCpteComsBankC = getDvaCredit(ssDco, bkCpteComsBank.getNcp());
 				eve.getEcritures().add( new bkmvti(bkCpteComsBank.getAge(), bkCpteComsBank.getDev(), bkCpteComsBank.getCha(), bkCpteComsBank.getNcp(),
 						bkCpteComsBank.getSuf(), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), 
-						null, params.getCodeUtil(), eve.getEve(), bkCpteComsBank.getClc(), dco, null, null, valeurCom, "C",lib, "N", pie, null, null, null, null,
+						null, params.getCodeUtil(), eve.getEve(), bkCpteComsBank.getClc(), dco, null, dvaCpteComsBankC, valeurCom, "C",lib, "N", pie, null, null, null, null,
 						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkCpteComsBank.getAge(), bkCpteComsBank.getDev(), 
 						valeurComBank, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 
 			}else{
 				// Ecriture Comission Bank
+				Date dvaCpteComsBankC = getDvaCredit(ssDco, bkCpteComsBank.getNcp());
 				eve.getEcritures().add( new bkmvti(bkCpteComsBank.getAge(), bkCpteComsBank.getDev(), bkCpteComsBank.getCha(), bkCpteComsBank.getNcp(), 
 						bkCpteComsBank.getSuf(), params.getCodeOperation(), OgMoHelper.padText(String.valueOf(numEc), OgMoHelper.LEFT, OgMoHelper.TAILLE_CODE_EVE, "0"), 
-						null, params.getCodeUtil(), eve.getEve(), bkCpteComsBank.getClc(), dco, null, null, valeurCom, "C",lib, "N", pie, null, null, null, null,
+						null, params.getCodeUtil(), eve.getEve(), bkCpteComsBank.getClc(), dco, null, dvaCpteComsBankC, valeurCom, "C",lib, "N", pie, null, null, null, null,
 						null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, bkCpteComsBank.getAge(), bkCpteComsBank.getDev(), 
 						valeurComBank, null, null, null, null, null, transaction.getRequestId(), null, null, eve.getNat(), "VA", null, null) );  numEc++;
 			}
 
 		}
 
-		// On libere les variables
-		CloseStream.fermeturesStream(rsLiaisonCentral); rsLiaisonCentral = null;
-		CloseStream.fermeturesStream(rsLiaisonHippo); rsLiaisonHippo = null;
-		CloseStream.fermeturesStream(rsCpteLiaison); rsCpteLiaison = null;
 		
 		mapComs.clear();
 
@@ -2516,6 +2562,95 @@ public class OrangeMoneyManager implements IOrangeMoneyManagerRemote {
 		
 		return numEve;
 	}
+    
+    public Date getDvaDebit(String date, String ncp) {
+		
+		Date dvaDate = null;
+		String pdr;
+		
+		try {
+			
+			pdr = ncp.substring(7, 10);
+			
+			if (dsCbs == null) findCBSServicesDataSystem();
+			if(dsCbs != null && StringUtils.isNotBlank(dsCbs.getDbConnectionString())) {
+				System.out.println("DVA: " + dsCbs.getDbConnectionString()+"/transactions/process/formatteddvadebit/" + date +"/" + pdr);
+				HttpGet getRequest = new HttpGet(dsCbs.getDbConnectionString()+"/transactions/process/formatteddvadebit/" + date +"/" + pdr);
+			    getRequest.setHeader("content-type", "application/json");
+			    CloseableHttpResponse response = Shared.getClosableHttpClient().execute(getRequest);
+			    HttpEntity entity = null;
+			    entity = response.getEntity();
+			    
+			    if(entity != null) {
+			    	
+			    	 if(entity != null) {
+			    		 
+			    		 String content = EntityUtils.toString(entity);
+						 JSONObject json = new JSONObject(content);
+						 System.out.println("JSONObject: " + json);
+						 String responseCode = json.getString("code");
+						 //System.out.println("responseCode: " + responseCode);
+						 if ("200".equalsIgnoreCase(responseCode)) {
+							 String datVal = json.getString("data");
+							 dvaDate = DateUtil.parse(datVal, DateUtil.DATE_TIME_MINUS_FORMAT_);
+						 }
+			    		 
+			    	 }
+			    	
+			    } 
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dvaDate;
+	}
+    
+    public Date getDvaCredit(String date, String ncp) {
+		
+		Date dvaDate = null;
+		String pdr;
+		
+		try {
+			
+			pdr = ncp.substring(7, 10);
+			
+			if (dsCbs == null) findCBSServicesDataSystem();
+			if(dsCbs != null && StringUtils.isNotBlank(dsCbs.getDbConnectionString())) {
+				System.out.println("DVA: " + dsCbs.getDbConnectionString()+"/transactions/process/formatteddvacredit/" + date +"/" + pdr);
+				HttpGet getRequest = new HttpGet(dsCbs.getDbConnectionString()+"/transactions/process/formatteddvacredit/" + date +"/" + pdr);
+			    getRequest.setHeader("content-type", "application/json");
+			    CloseableHttpResponse response = Shared.getClosableHttpClient().execute(getRequest);
+			    HttpEntity entity = null;
+			    entity = response.getEntity();
+			    
+			    if(entity != null) {
+			    	
+			    	 if(entity != null) {
+			    		 
+			    		 String content = EntityUtils.toString(entity);
+						 JSONObject json = new JSONObject(content);
+						 System.out.println("JSONObject: " + json);
+						 String responseCode = json.getString("code");
+						 //System.out.println("responseCode: " + responseCode);
+						 if ("200".equalsIgnoreCase(responseCode)) {
+							 String datVal = json.getString("data");
+							 dvaDate = DateUtil.parse(datVal, DateUtil.DATE_TIME_MINUS_FORMAT_);
+						 }
+			    		 
+			    	 }
+			    	
+			    } 
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dvaDate;
+	}
+
 
 	public boolean isBlocageDebitClient(String client,String ope) throws Exception{
 
