@@ -517,7 +517,7 @@ public interface IOrangeMoneyManagerRemote {
 	 * @return
 	 * @throws Exception
 	 */
-	public String getLienSig(String age, String ncp, String suf, String cli, Date datec, String heurec, String utic) throws Exception;
+	public String getLienSig(String ncp, String utic) throws Exception;
 	
 	public List<Subscriber> findAllSubscriberNonFactures();
 	

@@ -522,7 +522,8 @@ public abstract class AbstractDAOAPI<T> {
 		String age = ncp.split("-")[0];
 		String cli = ncp.split("-")[1];
 		String resp_code;
-		HttpGet getRequest = new HttpGet(url+"/getbalance/"+age+"/"+cli);
+		System.out.println("URL: "+url+"/findbalance/"+age+"/"+cli);
+		HttpGet getRequest = new HttpGet(url+"/findbalance/"+age+"/"+cli);
 		// add request parameter, form parameters
 		getRequest.setHeader("content-type", "application/json");
 
@@ -550,15 +551,15 @@ public abstract class AbstractDAOAPI<T> {
 					}
 
 					String retSrc = json.getString("data");
-					retSrc = retSrc.replaceAll("\\s", "");
-
-					String bkcom[] = StringUtils.split(retSrc, ",");
-					for(String s : bkcom) {
-						if(StringUtils.contains(s, "sin:")) {
-							solde = Double.valueOf(StringUtils.substringAfterLast(s.trim(), ":"));
-							break;
-						}
-					}
+		            //    System.out.println(retSrc);
+	                JSONObject jsonObj = new JSONObject(retSrc.toString());
+	                
+	                if(jsonObj.has("sin")) {
+	                	solde = jsonObj.getDouble("sin");
+	                }
+	                else {
+	                	solde = 0d;
+	                }
 				}
 			}
 			catch(NumberFormatException | NullPointerException e) {

@@ -259,38 +259,8 @@ public class FrmSubscriber extends AbstractPortalForm {
 
 		// Si la liste des phones n'est pas vide
 		System.out.println("---------phones.size() ------- : " + phones.size());
-		/* ***
-		if(phones != null && !phones.isEmpty()) {
-
-			// Recuperation des n° de tel saisis
-			for(SelectData sd : phones) if(sd.getValue() != null && !sd.getValue().trim().isEmpty() ) subscriber.getPhoneNumbers().add( sd.getValue().replaceAll(" ", "") );
-		}
-		*/
-
-		// S'il existe au moins un compte
-		// subscriber.getAccounts().clear();
+		
 		System.out.println("---------accounts.size() ------- : " + accounts.size());
-		/* *** 
-		if(accounts != null && !accounts.isEmpty()) {
-
-			// Recuperation des n° de cpte selectionnes
-			// System.out.println("----------------");
-			for(SelectData sd : accounts){
-				// System.out.println("------NO--------"+sd.getValue());
-				if(sd.getChecked().equals(Boolean.TRUE)){
-					// System.out.println("-------OK---------"+sd.getValue());
-					subscriber.getAccounts().add(sd.getValue());
-				}
-			}
-
-			if(subscriber.getAccounts().isEmpty() && accounts.size() == 1){
-				for(SelectData sd : accounts){
-					subscriber.getAccounts().add(sd.getValue());
-				}
-			}
-
-		}
-		*/
 		
 		if(StringUtils.isNotBlank(selectedAccount)) subscriber.getAccounts().add(selectedAccount);
 		if(StringUtils.isNotBlank(selectedPhone)) subscriber.getPhoneNumbers().add("237" + selectedPhone);
@@ -314,7 +284,7 @@ public class FrmSubscriber extends AbstractPortalForm {
 			
 			// Recherche de la signature du client
 			try {
-				urlSignature = OMViewHelper.appManager.getLienSig(selectedAccount.split("-")[0], selectedAccount.split("-")[1], "  ", subscriber.getCustomerId(), new Date(), new SimpleDateFormat("HHmmss").format(new Date()), OMViewHelper.getSessionUser().getLogin());
+				urlSignature = OMViewHelper.appManager.getLienSig(selectedAccount, OMViewHelper.getSessionUser().getLogin());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -331,7 +301,7 @@ public class FrmSubscriber extends AbstractPortalForm {
 				if(OMViewHelper.appManager.checkTransactionDay(selectedAccount)) {
 					// Recherche de la signature du client
 					try {
-						urlSignature = OMViewHelper.appManager.getLienSig(selectedAccount.split("-")[0], selectedAccount.split("-")[1], "  ", subscriber.getCustomerId(), new Date(), new SimpleDateFormat("HHmmss").format(new Date()), OMViewHelper.getSessionUser().getLogin());
+						urlSignature = OMViewHelper.appManager.getLienSig(selectedAccount, OMViewHelper.getSessionUser().getLogin());
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -362,7 +332,7 @@ public class FrmSubscriber extends AbstractPortalForm {
 			else {
 				// Recherche de la signature du client
 				try {
-					urlSignature = OMViewHelper.appManager.getLienSig(selectedAccount.split("-")[0], selectedAccount.split("-")[1], "  ", subscriber.getCustomerId(), new Date(), new SimpleDateFormat("HHmmss").format(new Date()), OMViewHelper.getSessionUser().getLogin());
+					urlSignature = OMViewHelper.appManager.getLienSig(selectedAccount, OMViewHelper.getSessionUser().getLogin());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -371,46 +341,6 @@ public class FrmSubscriber extends AbstractPortalForm {
 				accountChecked = true;
 			}
 						
-
-			/*
-			try {
-
-				System.out.println("************ result ************* : " + result);
-				if(result == Boolean.TRUE) {
-
-					try {
-						OMViewHelper.appManager.alerteCompteDormant(OMViewHelper.getSessionUser(), selectedAccount);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}	
-
-					// Message d'avertissement
-					PortalInformationHelper.showInformationDialog("Le compte " + selectedAccount + " est dormant !", InformationDialog.DIALOG_WARNING);
-
-					// Annulation
-					return;
-				}
-
-			}catch(Exception e){
-				e.printStackTrace();
-				// Affichage de l'exception
-				PortalExceptionHelper.threatException(e);
-			}
-			
-			if(result == Boolean.TRUE) return;
-
-			// Recherche de la signature du client
-			try {
-				urlSignature = OMViewHelper.appManager.getLienSig(selectedAccount.split("-")[0], selectedAccount.split("-")[1], "  ", subscriber.getCustomerId(), new Date(), new SimpleDateFormat("HHmmss").format(new Date()), OMViewHelper.getSessionUser().getLogin());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			accountChecked = true;
-			
-			*/			
 		}
 		
 	}
@@ -831,26 +761,7 @@ public class FrmSubscriber extends AbstractPortalForm {
 				}
 
 			}
-			
-			
-			
-			/* **** Tests ****
-			subscriber.setSubmsisdn(submsisdn);
-			subscriber.setSubkey(subkey);
-			subscriber.setSubstatus("xxx");
-			subscriber.setSubfirstname("xxx");
-			subscriber.setSublastname("xxx");
-			subscriber.setSubdob("xxx");
-			subscriber.setSubcin("xxx");
-
-			substatus = "xxx";
-			sublastname = "xxx";
-			subfirstname = "xxx";
-			subdob = "xxx";
-			subcin = "xxx";
-			kycOrangeChecked = true;
-			*/
-
+						
 		}catch(Exception e){
 			e.printStackTrace();
 			PortalExceptionHelper.threatException(e);
